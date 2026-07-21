@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Projeto - Jhone Estefano</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .project-detail-container {
+            padding: 30px;
+            max-width: 1000px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .project-header {
+            border-bottom: 2px solid #00405c;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        .project-header h1 {
+            color: #00405c;
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        .tech-tag {
+            display: inline-block;
+            background: #eef;
+            color: #00405c;
+            padding: 5px 12px;
+            margin: 5px 5px 5px 0;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00405c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .section-block {
+            margin-bottom: 30px;
+        }
+        .section-block h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .architecture-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Voltar ao Portfólio</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <a href="../index.html" class="back-link">&larr; Voltar para a Página Principal</a>
+        
+        <div class="project-detail-container" id="project-content">
+            <!-- Conteúdo injetado via JavaScript -->
+            <h1 style="text-align: center; color: #888;">Carregando detalhes do projeto...</h1>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Jhone Estefano dos Santos. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const projectsData = {
+            "medallion-lake": {
+                title: "Data Lake Moderno em Medallion Architecture",
+                tags: ["Databricks", "PySpark", "Python", "Airflow", "AWS S3"],
+                problem: "A Cortex precisava de um repositório centralizado, confiável e altamente escalável para processar volumes massivos de dados corporativos de forma ágil. A ausência de uma estruturação adequada de dados gerava gargalos operacionais e dificultava a tomada de decisões corporativas baseadas em informações de qualidade.",
+                solution: "Desenho e implementação de uma arquitetura de Data Lake escalável com o conceito de Medalhão (Bronze, Silver e Gold). Utilizando Python e PySpark no Databricks, os dados brutos são ingeridos na camada Bronze, limpos, estruturados e enriquecidos na camada Silver, e finalmente agregados na camada Gold para consumo imediato. Todo o ecossistema é orquestrado e automatizado de ponta a ponta com o Apache Airflow.",
+                techStack: [
+                    "<strong>Ingestão e Processamento:</strong> Python, PySpark, Databricks",
+                    "<strong>Orquestração:</strong> Apache Airflow para agendamento e monitoramento de DAGs",
+                    "<strong>Versionamento e CI/CD:</strong> Fluxo colaborativo via GitHub",
+                    "<strong>Armazenamento:</strong> Estrutura de nuvem (AWS S3)"
+                ],
+                outcome: "Entrega de pipelines de dados robustos e altamente resilientes, garantindo informações de altíssima qualidade às áreas de negócio em tempo reduzido. O tempo de processamento de dados massivos foi drasticamente otimizado, permitindo tomadas de decisão estratégicas quase em tempo real."
+            },
+            "etl-automation": {
+                title: "Framework Autônomo de Automação de Carga e ETL",
+                tags: ["Python", "SQL Server", "APIs", "Databricks", "Windows Server"],
+                problem: "Na TOOLS Digital Services, a área de dados lidava com processos exaustivos e altamente manuais de carga diária, gerando atrasos frequentes, alto risco de erro operacional humano e falta de rastreabilidade de falhas.",
+                solution: "Desenvolvimento de um framework robusto e totalmente automatizado de integração de pipelines (ETL/ELT). Foram programados scripts em Python capazes de extrair informações de bancos de dados relacionais e APIs externas, ingerindo as cargas diretamente no Databricks. Para garantir resiliência total, os fluxos possuem controle avançado de logs, rotinas de debug integradas e um mecanismo de autorecuperação automática contra falhas.",
+                techStack: [
+                    "<strong>Scripts de ETL:</strong> Python (pandas, requests, sqlalchemy)",
+                    "<strong>Ingestão:</strong> Databricks Lakehouse",
+                    "<strong>Infraestrutura:</strong> Execução agendada via Windows Server Task Scheduler e Airflow",
+                    "<strong>Bancos de Origem:</strong> Microsoft SQL Server e APIs REST variadas"
+                ],
+                outcome: "Automatização de 100% das rotinas manuais da área de dados, permitindo que os analistas direcionassem seu foco exclusivamente para análises estratégicas e resolução de problemas complexos de negócio, eliminando o estresse operacional."
+            },
+            "governance-bi": {
+                title: "Plataforma Integrada de Governança de Dados e BI",
+                tags: ["Power BI", "Metabase", "Governança", "SQL Server"],
+                problem: "Necessidade latente de proteger informações confidenciais corporativas e dados sensíveis, mitigando riscos de vazamento de acessos. Além disso, havia uma carência de visibilidade clara sobre SLAs internos e indicadores de performance operacionais por parte da diretoria executiva.",
+                solution: "Criação de dashboards gerenciais de alto nível no Power BI e no Metabase conectando-se a fontes de dados higienizadas e consolidadas. Paralelamente, foi desenvolvido e estruturado um painel centralizado de governança e controle de segurança, garantindo que o acesso a dados sensíveis fosse restrito e auditado dinamicamente com base nas funções de cada usuário.",
+                techStack: [
+                    "<strong>Visualização de Dados:</strong> Power BI, Metabase",
+                    "<strong>Manipulação de Dados:</strong> SQL Avançado para modelagem de visões analíticas",
+                    "<strong>Segurança e Governança:</strong> Implementação de políticas de Row-Level Security (RLS) e matrizes de permissão controladas"
+                ],
+                outcome: "Mitigação total de acessos indevidos e garantia de compliance corporativo. A diretoria executiva passou a contar com relatórios interativos e dinâmicos de SLA operacional, identificando em segundos os gargalos operacionais e as causas-raiz de falhas de performance."
+            }
+        };
+
+        // Get project from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        let projectKey = urlParams.get('project');
+        
+        // Default to medallion-lake if not specified or not found
+        if (!projectKey || !projectsData[projectKey]) {
+            projectKey = "medallion-lake";
+        }
+
+        const project = projectsData[projectKey];
+
+        // Render project details
+        const container = document.getElementById('project-content');
+        container.innerHTML = `
+            <div class="project-header">
+                <h1>${project.title}</h1>
+                <div>
+                    ${project.tags.map(tag => `<span class="tech-tag">${tag}</span>`).join('')}
+                </div>
+            </div>
+            
+            <section class="section-block" id="problem">
+                <h2>O Desafio / Problema</h2>
+                <p>${project.problem}</p>
+            </section>
+
+            <section class="section-block" id="solution">
+                <h2>A Solução Proposta</h2>
+                <p>${project.solution}</p>
+            </section>
+
+            <section class="section-block" id="tech-stack">
+                <h2>Stack Tecnológica Aplicada</h2>
+                <ul>
+                    ${project.techStack.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </section>
+
+            <section class="section-block" id="outcome">
+                <h2>Resultados e Impacto de Negócio</h2>
+                <p>${project.outcome}</p>
+            </section>
+        `;
+        
+        // Update browser title
+        document.title = `${project.title} - Portfólio Jhone Estefano`;
+    </script>
+</body>
+</html>

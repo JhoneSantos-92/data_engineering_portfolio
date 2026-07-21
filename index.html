@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Engineering Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#about">Sobre Mim</a></li>
+                <li><a href="#skills">Habilidades</a></li>
+                <li><a href="#experience">Experiência</a></li>
+                <li><a href="#projects">Projetos</a></li>
+                <li><a href="#contact">Contato</a></li>
+            </ul>
+        </nav>
+        <div class="header-content">
+            <h1>Jhone Estefano dos Santos</h1>
+            <p>Data Engineer | SQL | Python | Databricks | Airflow | PySpark | AWS</p>
+        </div>
+    </header>
+
+    <main>
+        <section id="about">
+            <h2>Sobre Mim</h2>
+            <p>
+                Profissional com sólida experiência em dados, atuando há mais de 1 ano em análise, automação e inteligência de negócios. Especialista em transformar dados brutos em informações estratégicas, utilizando ferramentas como Power BI, SQL, Python, Databricks e Metabase para gerar insights e apoiar decisões de negócio.
+            </p>
+            <p>
+                Minha trajetória anterior em suporte de sistemas e atendimento ao cliente me proporciona uma visão ampla dos processos e das necessidades reais dos usuários, permitindo criar soluções que não apenas resolvem problemas, mas previnem ocorrências e aumentam a eficiência operacional.
+            </p>
+             <p>
+                No meu dia a dia, aplico metodologias ágeis e práticas de BI para desenvolver dashboards interativos, implementar rotinas de ETL, e automatizar fluxos de dados que reduzem tempo de entrega e elevam a qualidade das informações. Tenho como objetivo continuar entregando valor através da análise de dados, unindo tecnologia, estratégia e experiência prática para gerar resultados consistentes e sustentáveis.
+            </p>
+        </section>
+
+        <section id="skills">
+            <h2>Habilidades Técnicas</h2>
+            <ul>
+                <li><strong>Plataformas de Nuvem:</strong> AWS</li>
+                <li><strong>Processamento de Dados:</strong> Python, PySpark, Databricks</li>
+                <li><strong>Orquestração de Dados:</strong> Airflow</li>
+                <li><strong>Banco de Dados:</strong> SQL (SQL Server, SQLite)</li>
+                <li><strong>Business Intelligence:</strong> Power BI, Metabase</li>
+                <li><strong>Controle de Versão:</strong> GitHub</li>
+                <li><strong>Metodologias:</strong> Agile, SCRUM, CRISP-DM</li>
+                <li><strong>Conceitos:</strong> Data Lakes (Medallion Architecture), ETL/ELT, Governança de Dados</li>
+            </ul>
+        </section>
+
+        <section id="experience">
+            <h2>Experiência Profissional</h2>
+            <article>
+                <h3>Engenheiro de Dados na Cortex</h3>
+                <p><em>maio de 2026 - Presente</em></p>
+                <ul>
+                    <li>Estruturação de Data Lakes no conceito Medallion, processando volumes massivos de dados com Python e PySpark no Databricks.</li>
+                    <li>Automação e monitoramento de fluxos de dados complexos de ponta a ponta utilizando o Airflow.</li>
+                    <li>Garantia de qualidade, versionamento e evolução das soluções de forma colaborativa via GitHub.</li>
+                </ul>
+            </article>
+            <article>
+                <h3>Especialista em Dados e Automação na TOOLS Digital Services</h3>
+                <p><em>dezembro de 2024 - maio de 2026</em></p>
+                <ul>
+                    <li>Estruturação de pipelines automatizados de dados (ETL/ELT) desde a extração em bancos relacionais e APIs até a ingestão no Databricks.</li>
+                    <li>Automação de 100% das rotinas manuais da área, permitindo foco em análise estratégica.</li>
+                    <li>Desenvolvimento de scripts em Python com controle de logs, debug e recuperação automática de falhas.</li>
+                    <li>Criação de dashboards estratégicos em Power BI para acompanhamento de SLA e gargalos operacionais.</li>
+                    <li>Atuação em governança e segurança de dados sensíveis, mitigando acessos indevidos.</li>
+                </ul>
+            </article>
+            <article>
+                <h3>Analista de Sistema na Matera</h3>
+                <p><em>agosto de 2023 - junho de 2024</em></p>
+                <ul>
+                    <li>Análise, investigação e correção de bugs no sistema de Informes Legais, garantindo compliance com normas do Banco Central do Brasil (BACEN).</li>
+                    <li>Atuação integrada com diversos módulos bancários como Empréstimos, Conta Corrente, Open Finance e Pix.</li>
+                    <li>Interpretação de regras de negócio e mapeamento de processos para melhorias em sistemas complexos.</li>
+                </ul>
+            </article>
+             <article>
+                <h3>Analista de Suporte (Sênior, Pleno, N1, N2) na MC1 - Win The Market</h3>
+                <p><em>fevereiro de 2017 - agosto de 2023</em></p>
+                <ul>
+                    <li>Resolução de cenários críticos junto aos clientes e apoio técnico ao time.</li>
+                    <li>Melhora de performance de integrações e otimização de consultas SQL.</li>
+                    <li>Análise técnica de falhas em aplicações e dados utilizando SQL Server, SQLite e Postman.</li>
+                    <li>Gerenciamento de chamados utilizando Jira e desenvolvimento de materiais de treinamento.</li>
+                </ul>
+            </article>
+        </section>
+
+        <section id="projects">
+            <h2>Projetos de Destaque</h2>
+            <div id="project-filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="databricks">Databricks</button>
+                <button class="filter-btn" data-filter="pyspark">PySpark</button>
+                <button class="filter-btn" data-filter="airflow">Airflow</button>
+                <button class="filter-btn" data-filter="python">Python & BI</button>
+            </div>
+            <div id="project-list">
+                <div class="project-card" data-tech="databricks pyspark airflow">
+                    <h3>Data Lake Moderno em Medallion Architecture</h3>
+                    <p>Concepção e implementação de um Data Lake escalável utilizando arquitetura de medalhão (Bronze, Silver, Gold), processando volumes massivos de dados corporativos com altíssima eficiência operacional.</p>
+                    <p><strong>Tecnologias:</strong> Databricks, PySpark, Python, Airflow, AWS</p>
+                    <a href="projects/project-detail.html?project=medallion-lake">Ver Estudo de Caso</a>
+                </div>
+                <div class="project-card" data-tech="python airflow">
+                    <h3>Framework Autônomo de Automação de Carga e ETL</h3>
+                    <p>Desenvolvimento de um motor robusto de integração de APIs e bancos de dados relacionais que eliminou 100% dos processos manuais da área, com mecanismos avançados de tratamento de erros, logs e autorecuperação.</p>
+                    <p><strong>Tecnologias:</strong> Python, SQL Server, Windows Server, Airflow</p>
+                    <a href="projects/project-detail.html?project=etl-automation">Ver Estudo de Caso</a>
+                </div>
+                <div class="project-card" data-tech="python">
+                    <h3>Plataforma Integrada de Governança de Dados e BI</h3>
+                    <p>Modelagem de painéis de alta performance em Power BI e Metabase com controle granular de acesso, garantindo a governança, integridade de dados sensíveis e compliance regulatório.</p>
+                    <p><strong>Tecnologias:</strong> Power BI, Metabase, Governança, SQL</p>
+                    <a href="projects/project-detail.html?project=governance-bi">Ver Estudo de Caso</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contato</h2>
+            <p>Você pode me encontrar em <a href="mailto:jhone.santos92@gmail.com">jhone.santos92@gmail.com</a> ou se conectar comigo no <a href="https://www.linkedin.com/in/jhone-estefano" target="_blank">LinkedIn</a>.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Jhone Estefano dos Santos. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
