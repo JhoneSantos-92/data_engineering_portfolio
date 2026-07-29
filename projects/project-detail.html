@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Projeto - Jhone Estefano</title>
     <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header>
         <nav>
             <div class="nav-bar">
-                <a href="../index.html" class="logo">JS</a>
+                <a href="../index.html" class="logo"><span class="logo-dot">&gt;</span>_jhone.santos</a>
                 <ul id="navMenu">
                     <li><a href="../index.html">Voltar ao Portfólio</a></li>
                     <li>
@@ -25,12 +30,11 @@
         </nav>
     </header>
 
-    <main>
+    <main class="project-detail-wrap">
         <a href="../index.html" class="back-link">&larr; Voltar para a Página Principal</a>
-        
+
         <div class="project-detail-container" id="project-content">
-            <!-- Conteúdo injetado via JavaScript -->
-            <h1 style="text-align: center; color: #888;">Carregando detalhes do projeto...</h1>
+            <h1 style="text-align: center; color: var(--color-text-muted);">Carregando detalhes do projeto...</h1>
         </div>
     </main>
 
@@ -89,7 +93,7 @@
         if (!project) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px 0;">
-                    <h1 style="color: #888;">Projeto não encontrado</h1>
+                    <h1 style="color: var(--color-text-muted);">Projeto não encontrado</h1>
                     <p>O estudo de caso solicitado não existe ou o link está incorreto.</p>
                     <a href="../index.html#projects" class="back-link">&larr; Ver todos os projetos</a>
                 </div>
@@ -105,7 +109,7 @@
                     ${project.tags.map(tag => `<span class="tech-tag">${tag}</span>`).join('')}
                 </div>
             </div>
-            
+
             <section class="section-block" id="problem">
                 <h2>O Desafio / Problema</h2>
                 <p>${project.problem}</p>
@@ -128,7 +132,7 @@
                 <p>${project.outcome}</p>
             </section>
         `;
-        
+
         // Update browser title
         document.title = `${project.title} - Portfólio Jhone Estefano`;
         }

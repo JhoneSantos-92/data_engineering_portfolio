@@ -19,22 +19,27 @@
     <meta name="twitter:image" content="images/og-cover.png">
 
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <nav>
             <div class="nav-bar">
-                <a href="#" class="logo">JS</a>
+                <a href="#" class="logo"><span class="logo-dot">&gt;</span>_jhone.santos</a>
                 <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navMenu">
                     <span></span><span></span><span></span>
                 </button>
                 <ul id="navMenu">
-                    <li><a href="#about">Sobre Mim</a></li>
-                    <li><a href="#skills">Habilidades</a></li>
-                    <li><a href="#experience">Experiência</a></li>
-                    <li><a href="#projects">Projetos</a></li>
-                    <li><a href="#contact">Contato</a></li>
+                    <li><a href="#about" data-nav-link>Sobre</a></li>
+                    <li><a href="#skills" data-nav-link>Stack</a></li>
+                    <li><a href="#experience" data-nav-link>Experiência</a></li>
+                    <li><a href="#projects" data-nav-link>Projetos</a></li>
+                    <li><a href="#contact" data-nav-link>Contato</a></li>
                     <li>
                         <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema claro/escuro" aria-pressed="false">
                             <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -44,39 +49,112 @@
                 </ul>
             </div>
         </nav>
+
         <div class="hero">
-            <div class="avatar">JS</div>
-            <h1>Jhone Estefano dos Santos</h1>
-            <p class="hero-subtitle">Engenheiro de Dados</p>
-            <p class="hero-tags">Python · SQL · PySpark · Databricks · Airflow · AWS</p>
-            <div class="hero-cta">
-                <a href="#projects" class="btn btn-primary">Ver Projetos</a>
-                <a href="#contact" class="btn btn-outline">Entrar em Contato</a>
-            </div>
-            <div class="hero-social">
-                <a href="https://www.linkedin.com/in/jhone-estefano" target="_blank" rel="noopener">LinkedIn</a>
-                <a href="mailto:jhone.santos92@gmail.com">E-mail</a>
-                <a href="https://github.com/JhoneSantos-92" target="_blank" rel="noopener">GitHub</a>
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="eyebrow hero-eyebrow">Engenharia de Dados &middot; Python &middot; Databricks</span>
+                    <h1>Transformo dados brutos em <span class="highlight">pipelines confiáveis</span> e decisões de negócio.</h1>
+                    <p class="hero-subtitle">
+                        Engenheiro de Dados com trajetória sólida em automação, BI e arquitetura de Data Lakes.
+                        Construo soluções que eliminam trabalho manual, escalam com o volume de dados e entregam
+                        informação de qualidade para quem decide.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#projects" class="btn btn-primary">Ver Projetos</a>
+                        <a href="#contact" class="btn btn-outline">Falar Comigo</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">9+</span>
+                            <span class="hero-stat-label">anos em Tecnologia</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">100%</span>
+                            <span class="hero-stat-label">de rotinas manuais automatizadas</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">7+</span>
+                            <span class="hero-stat-label">ferramentas do ecossistema de dados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="terminal-bar">
+                        <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+                        <span class="terminal-title">pipeline_status.py</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div><span class="line-prompt">&gt;&gt;&gt;</span> pipeline = DataLake(<span class="line-str">"medallion"</span>)</div>
+                        <div><span class="line-prompt">&gt;&gt;&gt;</span> pipeline.run()</div>
+                        <div class="line-comment"># bronze &rarr; silver &rarr; gold</div>
+                        <div class="line-indent"><span class="line-key">bronze</span>: ingest_ok <span class="line-str">(2.4M rows)</span></div>
+                        <div class="line-indent"><span class="line-key">silver</span>: cleaned + validated</div>
+                        <div class="line-indent"><span class="line-key">gold</span>: ready_for_bi</div>
+                        <div class="terminal-status"><span class="dot"></span> status: sucesso</div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <main>
-        <section id="about">
-            <h2>Sobre Mim</h2>
-            <p>
-                Profissional com sólida experiência em dados, atuando há mais de 1 ano em análise, automação e inteligência de negócios. Especialista em transformar dados brutos em informações estratégicas, utilizando ferramentas como Power BI, SQL, Python, Databricks e Metabase para gerar insights e apoiar decisões de negócio.
-            </p>
-            <p>
-                Minha trajetória anterior em suporte de sistemas e atendimento ao cliente me proporciona uma visão ampla dos processos e das necessidades reais dos usuários, permitindo criar soluções que não apenas resolvem problemas, mas previnem ocorrências e aumentam a eficiência operacional.
-            </p>
-             <p>
-                No meu dia a dia, aplico metodologias ágeis e práticas de BI para desenvolver dashboards interativos, implementar rotinas de ETL, e automatizar fluxos de dados que reduzem tempo de entrega e elevam a qualidade das informações. Tenho como objetivo continuar entregando valor através da análise de dados, unindo tecnologia, estratégia e experiência prática para gerar resultados consistentes e sustentáveis.
-            </p>
+        <section id="about" class="page-section">
+            <div class="section-head">
+                <span class="eyebrow">Sobre mim</span>
+                <h2>Da linha de frente do suporte à engenharia de dados</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-copy">
+                    <p>
+                        Profissional com sólida experiência em dados, atuando em análise, automação e inteligência
+                        de negócios. Especialista em transformar dados brutos em informações estratégicas, utilizando
+                        ferramentas como Power BI, SQL, Python, Databricks e Metabase para gerar insights e apoiar
+                        decisões de negócio.
+                    </p>
+                    <p>
+                        Minha trajetória anterior em suporte de sistemas e atendimento ao cliente me proporciona uma
+                        visão ampla dos processos e das necessidades reais dos usuários, permitindo criar soluções
+                        que não apenas resolvem problemas, mas previnem ocorrências e aumentam a eficiência operacional.
+                    </p>
+                    <p>
+                        No meu dia a dia, aplico metodologias ágeis e práticas de BI para desenvolver dashboards
+                        interativos, implementar rotinas de ETL e automatizar fluxos de dados que reduzem tempo de
+                        entrega e elevam a qualidade das informações.
+                    </p>
+                </div>
+                <div class="highlight-list">
+                    <div class="highlight-card">
+                        <div class="highlight-icon">DL</div>
+                        <div>
+                            <h3>Data Lakes escaláveis</h3>
+                            <p>Arquitetura Medallion (Bronze, Silver, Gold) para dados corporativos em alto volume.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-icon">ETL</div>
+                        <div>
+                            <h3>Automação de ponta a ponta</h3>
+                            <p>Pipelines com logs, recuperação automática de falhas e zero intervenção manual.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-icon">BI</div>
+                        <div>
+                            <h3>Governança e BI</h3>
+                            <p>Dashboards e controle de acesso que protegem dados sensíveis sem travar a operação.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="skills">
-            <h2>Habilidades Técnicas</h2>
+        <section id="skills" class="page-section">
+            <div class="section-head">
+                <span class="eyebrow">Stack técnica</span>
+                <h2>Ferramentas que uso no dia a dia</h2>
+            </div>
             <div class="skills-grid">
                 <div class="skill-category">
                     <h3>Nuvem</h3>
@@ -113,51 +191,68 @@
             </div>
         </section>
 
-        <section id="experience">
-            <h2>Experiência Profissional</h2>
-            <article>
-                <h3>Engenheiro de Dados na Cortex</h3>
-                <p><em>maio de 2026 - Presente</em></p>
-                <ul>
-                    <li>Estruturação de Data Lakes no conceito Medallion, processando volumes massivos de dados com Python e PySpark no Databricks.</li>
-                    <li>Automação e monitoramento de fluxos de dados complexos de ponta a ponta utilizando o Airflow.</li>
-                    <li>Garantia de qualidade, versionamento e evolução das soluções de forma colaborativa via GitHub.</li>
-                </ul>
-            </article>
-            <article>
-                <h3>Especialista em Dados e Automação na TOOLS Digital Services</h3>
-                <p><em>dezembro de 2024 - maio de 2026</em></p>
-                <ul>
-                    <li>Estruturação de pipelines automatizados de dados (ETL/ELT) desde a extração em bancos relacionais e APIs até a ingestão no Databricks.</li>
-                    <li>Automação de 100% das rotinas manuais da área, permitindo foco em análise estratégica.</li>
-                    <li>Desenvolvimento de scripts em Python com controle de logs, debug e recuperação automática de falhas.</li>
-                    <li>Criação de dashboards estratégicos em Power BI para acompanhamento de SLA e gargalos operacionais.</li>
-                    <li>Atuação em governança e segurança de dados sensíveis, mitigando acessos indevidos.</li>
-                </ul>
-            </article>
-            <article>
-                <h3>Analista de Sistema na Matera</h3>
-                <p><em>agosto de 2023 - junho de 2024</em></p>
-                <ul>
-                    <li>Análise, investigação e correção de bugs no sistema de Informes Legais, garantindo compliance com normas do Banco Central do Brasil (BACEN).</li>
-                    <li>Atuação integrada com diversos módulos bancários como Empréstimos, Conta Corrente, Open Finance e Pix.</li>
-                    <li>Interpretação de regras de negócio e mapeamento de processos para melhorias em sistemas complexos.</li>
-                </ul>
-            </article>
-             <article>
-                <h3>Analista de Suporte (Sênior, Pleno, N1, N2) na MC1 - Win The Market</h3>
-                <p><em>fevereiro de 2017 - agosto de 2023</em></p>
-                <ul>
-                    <li>Resolução de cenários críticos junto aos clientes e apoio técnico ao time.</li>
-                    <li>Melhora de performance de integrações e otimização de consultas SQL.</li>
-                    <li>Análise técnica de falhas em aplicações e dados utilizando SQL Server, SQLite e Postman.</li>
-                    <li>Gerenciamento de chamados utilizando Jira e desenvolvimento de materiais de treinamento.</li>
-                </ul>
-            </article>
+        <section id="experience" class="page-section">
+            <div class="section-head">
+                <span class="eyebrow">Trajetória</span>
+                <h2>Experiência Profissional</h2>
+            </div>
+            <div class="timeline">
+                <article class="timeline-item">
+                    <div class="timeline-header">
+                        <h3>Engenheiro de Dados na Cortex</h3>
+                        <span class="badge-current">Atual</span>
+                    </div>
+                    <span class="period">maio de 2026 &mdash; Presente</span>
+                    <ul>
+                        <li>Estruturação de Data Lakes no conceito Medallion, processando volumes massivos de dados com Python e PySpark no Databricks.</li>
+                        <li>Automação e monitoramento de fluxos de dados complexos de ponta a ponta utilizando o Airflow.</li>
+                        <li>Garantia de qualidade, versionamento e evolução das soluções de forma colaborativa via GitHub.</li>
+                    </ul>
+                </article>
+                <article class="timeline-item">
+                    <div class="timeline-header">
+                        <h3>Especialista em Dados e Automação na TOOLS Digital Services</h3>
+                    </div>
+                    <span class="period">dezembro de 2024 &mdash; maio de 2026</span>
+                    <ul>
+                        <li>Estruturação de pipelines automatizados de dados (ETL/ELT) desde a extração em bancos relacionais e APIs até a ingestão no Databricks.</li>
+                        <li>Automação de 100% das rotinas manuais da área, permitindo foco em análise estratégica.</li>
+                        <li>Desenvolvimento de scripts em Python com controle de logs, debug e recuperação automática de falhas.</li>
+                        <li>Criação de dashboards estratégicos em Power BI para acompanhamento de SLA e gargalos operacionais.</li>
+                        <li>Atuação em governança e segurança de dados sensíveis, mitigando acessos indevidos.</li>
+                    </ul>
+                </article>
+                <article class="timeline-item">
+                    <div class="timeline-header">
+                        <h3>Analista de Sistema na Matera</h3>
+                    </div>
+                    <span class="period">agosto de 2023 &mdash; junho de 2024</span>
+                    <ul>
+                        <li>Análise, investigação e correção de bugs no sistema de Informes Legais, garantindo compliance com normas do Banco Central do Brasil (BACEN).</li>
+                        <li>Atuação integrada com diversos módulos bancários como Empréstimos, Conta Corrente, Open Finance e Pix.</li>
+                        <li>Interpretação de regras de negócio e mapeamento de processos para melhorias em sistemas complexos.</li>
+                    </ul>
+                </article>
+                <article class="timeline-item">
+                    <div class="timeline-header">
+                        <h3>Analista de Suporte (Sênior, Pleno, N1, N2) na MC1 - Win The Market</h3>
+                    </div>
+                    <span class="period">fevereiro de 2017 &mdash; agosto de 2023</span>
+                    <ul>
+                        <li>Resolução de cenários críticos junto aos clientes e apoio técnico ao time.</li>
+                        <li>Melhora de performance de integrações e otimização de consultas SQL.</li>
+                        <li>Análise técnica de falhas em aplicações e dados utilizando SQL Server, SQLite e Postman.</li>
+                        <li>Gerenciamento de chamados utilizando Jira e desenvolvimento de materiais de treinamento.</li>
+                    </ul>
+                </article>
+            </div>
         </section>
 
-        <section id="projects">
-            <h2>Projetos de Destaque</h2>
+        <section id="projects" class="page-section">
+            <div class="section-head">
+                <span class="eyebrow">Portfólio</span>
+                <h2>Projetos de Destaque</h2>
+            </div>
             <div id="project-filters">
                 <button class="filter-btn active" data-filter="all">Todos</button>
                 <button class="filter-btn" data-filter="databricks">Databricks</button>
@@ -193,14 +288,23 @@
             </div>
         </section>
 
-        <section id="contact">
-            <h2>Contato</h2>
-            <p>Você pode me encontrar em <a href="mailto:jhone.santos92@gmail.com">jhone.santos92@gmail.com</a> ou se conectar comigo no <a href="https://www.linkedin.com/in/jhone-estefano" target="_blank">LinkedIn</a>.</p>
+        <section id="contact" class="page-section">
+            <div class="contact-panel">
+                <span class="eyebrow">Vamos conversar</span>
+                <h2>Aberto a novos desafios em dados</h2>
+                <p class="section-lede">Se você busca alguém para estruturar pipelines confiáveis e transformar dados em decisão, vamos conversar.</p>
+                <div class="contact-actions">
+                    <a href="mailto:jhone.santos92@gmail.com" class="btn btn-primary">jhone.santos92@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/jhone-estefano" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn</a>
+                    <a href="https://github.com/JhoneSantos-92" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
+                </div>
+            </div>
         </section>
     </main>
 
     <footer>
         <p>&copy; 2026 Jhone Estefano dos Santos. Todos os direitos reservados.</p>
+        <p class="footer-tag">construído com HTML, CSS e Python &middot; hospedado no GitHub Pages</p>
     </footer>
 
     <script src="js/main.js"></script>

@@ -81,19 +81,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Reveal sections on scroll
-    const sections = document.querySelectorAll('main section');
+    const sections = document.querySelectorAll('main .page-section');
     if ('IntersectionObserver' in window && sections.length) {
-        const observer = new IntersectionObserver((entries) => {
+        const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('in-view');
-                    observer.unobserve(entry.target);
+                    revealObserver.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.15 });
 
-        sections.forEach(section => observer.observe(section));
+        sections.forEach(section => revealObserver.observe(section));
     } else {
         sections.forEach(section => section.classList.add('in-view'));
+    }
+
+    // Scrollspy: highlight the nav link for the section in view
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    const spySections = Array.from(navLinks)
+        .map(link => document.querySelector(link.getAttribute('href')))
+        .filter(Boolean);
+
+    if ('IntersectionObserver' in window && spySections.length) {
+        const setActive = (id) => {
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+            });
+        };
+
+        const spyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActive(entry.target.id);
+                }
+            });
+        }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+        spySections.forEach(section => spyObserver.observe(section));
     }
 });
