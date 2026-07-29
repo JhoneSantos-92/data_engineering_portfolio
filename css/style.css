@@ -1,20 +1,30 @@
 /* ==========================================================================
    Design tokens
+
+   --color-brand*   : cor de marca, SEMPRE escura nos dois temas. Usada como
+                       fundo de header/hero/footer e em botoes preenchidos com
+                       texto branco. Nunca varia para nao quebrar o contraste.
+   --color-accent*  : cor de destaque para links/icones/bordas sobre uma
+                       superficie (nunca como fundo solido com texto branco).
+                       Essa sim se adapta entre os temas.
    ========================================================================== */
 :root {
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-    --color-bg: #f4f6f8;
+    --color-bg: #f5f7fa;
     --color-surface: #ffffff;
-    --color-surface-alt: #eef3f6;
-    --color-text: #1c2b33;
-    --color-text-muted: #55707d;
-    --color-border: #e1e8ec;
+    --color-surface-alt: #eef2f6;
+    --color-text: #17242c;
+    --color-text-muted: #4d6470;
+    --color-border: #dde5ea;
 
-    --color-primary: #00405c;
-    --color-primary-strong: #002a3d;
-    --color-accent: #0a84ae;
-    --color-accent-soft: #e4f2f7;
+    --color-brand: #0b3550;
+    --color-brand-strong: #082639;
+    --color-on-brand: #ffffff;
+
+    --color-accent: #0b6e90;
+    --color-accent-strong: #084f68;
+    --color-accent-soft: #e3f2f7;
 
     --shadow-sm: 0 1px 3px rgba(15, 35, 45, 0.08);
     --shadow-md: 0 10px 30px rgba(15, 35, 45, 0.10);
@@ -33,17 +43,19 @@
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --color-bg: #0d151b;
-        --color-surface: #131f27;
-        --color-surface-alt: #182631;
-        --color-text: #e7eef2;
-        --color-text-muted: #92abb6;
-        --color-border: #223440;
+        --color-bg: #0c1116;
+        --color-surface: #141c23;
+        --color-surface-alt: #1a2530;
+        --color-text: #eef3f6;
+        --color-text-muted: #a3b7c2;
+        --color-border: #253340;
 
-        --color-primary: #4fb3d9;
-        --color-primary-strong: #7cc9e6;
-        --color-accent: #4fb3d9;
-        --color-accent-soft: #17313d;
+        --color-brand: #082639;
+        --color-brand-strong: #051a27;
+
+        --color-accent: #5fc3e8;
+        --color-accent-strong: #8ad4ee;
+        --color-accent-soft: #12313f;
 
         --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
         --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
@@ -54,17 +66,19 @@
 }
 
 :root[data-theme="dark"] {
-    --color-bg: #0d151b;
-    --color-surface: #131f27;
-    --color-surface-alt: #182631;
-    --color-text: #e7eef2;
-    --color-text-muted: #92abb6;
-    --color-border: #223440;
+    --color-bg: #0c1116;
+    --color-surface: #141c23;
+    --color-surface-alt: #1a2530;
+    --color-text: #eef3f6;
+    --color-text-muted: #a3b7c2;
+    --color-border: #253340;
 
-    --color-primary: #4fb3d9;
-    --color-primary-strong: #7cc9e6;
-    --color-accent: #4fb3d9;
-    --color-accent-soft: #17313d;
+    --color-brand: #082639;
+    --color-brand-strong: #051a27;
+
+    --color-accent: #5fc3e8;
+    --color-accent-strong: #8ad4ee;
+    --color-accent-soft: #12313f;
 
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
     --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
@@ -103,9 +117,11 @@ a { color: var(--color-accent); }
 
 /* ==========================================================================
    Header & navigation
+   Fundo sempre em --color-brand (escuro fixo) para garantir contraste com o
+   texto branco, independente do tema claro/escuro escolhido.
    ========================================================================== */
 header {
-    background: var(--color-primary);
+    background: var(--color-brand);
     color: #fff;
 }
 
@@ -113,7 +129,7 @@ nav {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: var(--color-primary);
+    background: var(--color-brand);
     box-shadow: var(--shadow-sm);
 }
 
@@ -139,6 +155,7 @@ nav {
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.03em;
+    flex-shrink: 0;
 }
 
 .nav-toggle {
@@ -212,7 +229,7 @@ nav a:focus-visible {
    Hero
    ========================================================================== */
 .hero {
-    background: linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
+    background: linear-gradient(160deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
     color: #fff;
     text-align: center;
     padding: 72px 24px 90px;
@@ -231,6 +248,7 @@ nav a:focus-visible {
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 0.04em;
+    color: #fff;
 }
 
 .hero h1 {
@@ -238,6 +256,7 @@ nav a:focus-visible {
     font-size: clamp(1.9rem, 4vw, 2.75rem);
     font-weight: 800;
     letter-spacing: -0.01em;
+    color: #fff;
 }
 
 .hero-subtitle {
@@ -280,7 +299,7 @@ nav a:focus-visible {
 
 .btn-primary {
     background: #fff;
-    color: var(--color-primary);
+    color: var(--color-brand);
     box-shadow: var(--shadow-md);
 }
 
@@ -296,6 +315,7 @@ nav a:focus-visible {
     display: flex;
     gap: 12px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .hero-social a {
@@ -319,7 +339,7 @@ nav a:focus-visible {
    ========================================================================== */
 main {
     max-width: 1080px;
-    margin: -50px auto 20px;
+    margin: -40px auto 20px;
     padding: 0 24px 20px;
     position: relative;
     z-index: 2;
@@ -400,16 +420,11 @@ section p { color: var(--color-text-muted); }
 .tag {
     display: inline-block;
     background: var(--color-accent-soft);
-    color: var(--color-primary);
+    color: var(--color-accent);
     padding: 6px 14px;
     border-radius: var(--radius-pill);
     font-size: 0.85rem;
     font-weight: 600;
-}
-
-:root[data-theme="dark"] .tag { color: var(--color-primary-strong); }
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .tag { color: var(--color-primary-strong); }
 }
 
 /* ==========================================================================
@@ -439,6 +454,7 @@ section p { color: var(--color-text-muted); }
 #experience h3 {
     margin: 0 0 4px;
     font-size: 1.1rem;
+    color: var(--color-text);
 }
 
 #experience em {
@@ -475,9 +491,9 @@ section p { color: var(--color-text-muted); }
 
 .filter-btn:hover,
 .filter-btn.active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: var(--color-on-brand);
 }
 
 #project-list {
@@ -508,7 +524,10 @@ section p { color: var(--color-text-muted); }
     color: var(--color-text);
 }
 
-.project-card p { flex-grow: 1; }
+.project-card p {
+    flex-grow: 1;
+    color: var(--color-text-muted);
+}
 
 .project-card-tags {
     display: flex;
@@ -526,8 +545,8 @@ section p { color: var(--color-text-muted); }
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: var(--color-primary);
-    color: #fff;
+    background: var(--color-brand);
+    color: var(--color-on-brand);
     padding: 10px 18px;
     text-decoration: none;
     border-radius: var(--radius-pill);
@@ -539,7 +558,7 @@ section p { color: var(--color-text-muted); }
 }
 
 .project-card a.card-link:hover {
-    background: var(--color-accent);
+    background: var(--color-brand-strong);
     transform: translateX(2px);
 }
 
@@ -555,7 +574,7 @@ section p { color: var(--color-text-muted); }
 footer {
     text-align: center;
     padding: 28px 24px;
-    background: var(--color-primary-strong);
+    background: var(--color-brand-strong);
     color: rgba(255, 255, 255, 0.75);
     font-size: 0.85rem;
 }
@@ -588,17 +607,12 @@ footer {
 .tech-tag {
     display: inline-block;
     background: var(--color-accent-soft);
-    color: var(--color-primary);
+    color: var(--color-accent);
     padding: 5px 14px;
     margin: 4px 6px 4px 0;
     border-radius: var(--radius-pill);
     font-weight: 700;
     font-size: 0.85rem;
-}
-
-:root[data-theme="dark"] .tech-tag { color: var(--color-primary-strong); }
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .tech-tag { color: var(--color-primary-strong); }
 }
 
 .back-link {
@@ -637,7 +651,7 @@ footer {
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
-        background: var(--color-primary);
+        background: var(--color-brand);
         padding: 12px 24px 20px;
         max-height: 0;
         overflow: hidden;
@@ -648,7 +662,9 @@ footer {
 
     nav ul li { width: 100%; padding: 8px 0; }
 
+    .theme-toggle { margin-top: 4px; }
+
     .hero { padding: 56px 20px 70px; }
-    main { margin-top: -40px; }
+    main { margin-top: -32px; }
     section { padding: 26px; }
 }
