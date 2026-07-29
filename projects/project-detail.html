@@ -6,67 +6,22 @@
     <title>Detalhes do Projeto - Jhone Estefano</title>
     <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .project-detail-container {
-            padding: 30px;
-            max-width: 1000px;
-            margin: 30px auto;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .project-header {
-            border-bottom: 2px solid #00405c;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-        }
-        .project-header h1 {
-            color: #00405c;
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-        }
-        .tech-tag {
-            display: inline-block;
-            background: #eef;
-            color: #00405c;
-            padding: 5px 12px;
-            margin: 5px 5px 5px 0;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #00405c;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .section-block {
-            margin-bottom: 30px;
-        }
-        .section-block h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-        .architecture-img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-top: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-    </style>
 </head>
 <body>
     <header>
         <nav>
-            <ul>
-                <li><a href="../index.html">Voltar ao Portfólio</a></li>
-            </ul>
+            <div class="nav-bar">
+                <a href="../index.html" class="logo">JS</a>
+                <ul id="navMenu">
+                    <li><a href="../index.html">Voltar ao Portfólio</a></li>
+                    <li>
+                        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema claro/escuro" aria-pressed="false">
+                            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
 
@@ -178,5 +133,6 @@
         document.title = `${project.title} - Portfólio Jhone Estefano`;
         }
     </script>
+    <script src="../js/main.js"></script>
 </body>
 </html>

@@ -1,15 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Smooth scrolling for navigation links with header offset
-    document.querySelectorAll('nav a').forEach(anchor => {
+    const root = document.documentElement;
+
+    // Theme toggle (persisted in localStorage, defaults to system preference)
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            root.setAttribute('data-theme', storedTheme);
+            themeToggle.setAttribute('aria-pressed', storedTheme === 'dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const currentTheme = root.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
+            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            root.setAttribute('data-theme', nextTheme);
+            localStorage.setItem('theme', nextTheme);
+            themeToggle.setAttribute('aria-pressed', nextTheme === 'dark');
+        });
+    }
+
+    // Mobile navigation toggle
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            const isOpen = navMenu.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', isOpen);
+        });
+
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('open');
+                navToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
+    // Smooth scrolling for navigation links with sticky-nav offset
+    document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
-            
+
             if (targetElement) {
-                const headerHeight = document.querySelector('header').offsetHeight;
+                e.preventDefault();
+                const nav = document.querySelector('nav');
+                const navHeight = nav ? nav.offsetHeight : 0;
                 const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = elementPosition - headerHeight - 20; // 20px of extra breathing room
+                const offsetPosition = elementPosition - navHeight - 20; // breathing room
 
                 window.scrollTo({
                     top: offsetPosition,
@@ -25,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Set active class on button
             filterButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
@@ -33,11 +72,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             projectCards.forEach(card => {
                 if (filter === 'all' || card.dataset.tech.includes(filter)) {
-                    card.style.display = 'block';
+                    card.style.display = '';
                 } else {
                     card.style.display = 'none';
                 }
             });
         });
     });
+
+    // Reveal sections on scroll
+    const sections = document.querySelectorAll('main section');
+    if ('IntersectionObserver' in window && sections.length) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        sections.forEach(section => observer.observe(section));
+    } else {
+        sections.forEach(section => section.classList.add('in-view'));
+    }
 });

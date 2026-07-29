@@ -24,17 +24,40 @@
 <body>
     <header>
         <nav>
-            <ul>
-                <li><a href="#about">Sobre Mim</a></li>
-                <li><a href="#skills">Habilidades</a></li>
-                <li><a href="#experience">Experiência</a></li>
-                <li><a href="#projects">Projetos</a></li>
-                <li><a href="#contact">Contato</a></li>
-            </ul>
+            <div class="nav-bar">
+                <a href="#" class="logo">JS</a>
+                <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navMenu">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul id="navMenu">
+                    <li><a href="#about">Sobre Mim</a></li>
+                    <li><a href="#skills">Habilidades</a></li>
+                    <li><a href="#experience">Experiência</a></li>
+                    <li><a href="#projects">Projetos</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                    <li>
+                        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema claro/escuro" aria-pressed="false">
+                            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </nav>
-        <div class="header-content">
+        <div class="hero">
+            <div class="avatar">JS</div>
             <h1>Jhone Estefano dos Santos</h1>
-            <p>Data Engineer | SQL | Python | Databricks | Airflow | PySpark | AWS</p>
+            <p class="hero-subtitle">Engenheiro de Dados</p>
+            <p class="hero-tags">Python · SQL · PySpark · Databricks · Airflow · AWS</p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">Ver Projetos</a>
+                <a href="#contact" class="btn btn-outline">Entrar em Contato</a>
+            </div>
+            <div class="hero-social">
+                <a href="https://www.linkedin.com/in/jhone-estefano" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="mailto:jhone.santos92@gmail.com">E-mail</a>
+                <a href="https://github.com/JhoneSantos-92" target="_blank" rel="noopener">GitHub</a>
+            </div>
         </div>
     </header>
 
@@ -54,16 +77,40 @@
 
         <section id="skills">
             <h2>Habilidades Técnicas</h2>
-            <ul>
-                <li><strong>Plataformas de Nuvem:</strong> AWS</li>
-                <li><strong>Processamento de Dados:</strong> Python, PySpark, Databricks</li>
-                <li><strong>Orquestração de Dados:</strong> Airflow</li>
-                <li><strong>Banco de Dados:</strong> SQL (SQL Server, SQLite)</li>
-                <li><strong>Business Intelligence:</strong> Power BI, Metabase</li>
-                <li><strong>Controle de Versão:</strong> GitHub</li>
-                <li><strong>Metodologias:</strong> Agile, SCRUM, CRISP-DM</li>
-                <li><strong>Conceitos:</strong> Data Lakes (Medallion Architecture), ETL/ELT, Governança de Dados</li>
-            </ul>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Nuvem</h3>
+                    <div class="skill-tags"><span class="tag">AWS</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Processamento de Dados</h3>
+                    <div class="skill-tags"><span class="tag">Python</span><span class="tag">PySpark</span><span class="tag">Databricks</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Orquestração</h3>
+                    <div class="skill-tags"><span class="tag">Airflow</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Banco de Dados</h3>
+                    <div class="skill-tags"><span class="tag">SQL Server</span><span class="tag">SQLite</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Business Intelligence</h3>
+                    <div class="skill-tags"><span class="tag">Power BI</span><span class="tag">Metabase</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Controle de Versão</h3>
+                    <div class="skill-tags"><span class="tag">Git</span><span class="tag">GitHub</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Metodologias</h3>
+                    <div class="skill-tags"><span class="tag">Agile</span><span class="tag">SCRUM</span><span class="tag">CRISP-DM</span></div>
+                </div>
+                <div class="skill-category">
+                    <h3>Conceitos</h3>
+                    <div class="skill-tags"><span class="tag">Medallion Architecture</span><span class="tag">ETL/ELT</span><span class="tag">Governança de Dados</span></div>
+                </div>
+            </div>
         </section>
 
         <section id="experience">
@@ -122,20 +169,26 @@
                 <div class="project-card" data-tech="databricks pyspark airflow">
                     <h3>Data Lake Moderno em Medallion Architecture</h3>
                     <p>Concepção e implementação de um Data Lake escalável utilizando arquitetura de medalhão (Bronze, Silver, Gold), processando volumes massivos de dados corporativos com altíssima eficiência operacional.</p>
-                    <p><strong>Tecnologias:</strong> Databricks, PySpark, Python, Airflow, AWS</p>
-                    <a href="projects/project-detail.html?project=medallion-lake">Ver Estudo de Caso</a>
+                    <div class="project-card-tags">
+                        <span class="tag">Databricks</span><span class="tag">PySpark</span><span class="tag">Python</span><span class="tag">Airflow</span><span class="tag">AWS</span>
+                    </div>
+                    <a href="projects/project-detail.html?project=medallion-lake" class="card-link">Ver Estudo de Caso &rarr;</a>
                 </div>
                 <div class="project-card" data-tech="python airflow">
                     <h3>Framework Autônomo de Automação de Carga e ETL</h3>
                     <p>Desenvolvimento de um motor robusto de integração de APIs e bancos de dados relacionais que eliminou 100% dos processos manuais da área, com mecanismos avançados de tratamento de erros, logs e autorecuperação.</p>
-                    <p><strong>Tecnologias:</strong> Python, SQL Server, Windows Server, Airflow</p>
-                    <a href="projects/project-detail.html?project=etl-automation">Ver Estudo de Caso</a>
+                    <div class="project-card-tags">
+                        <span class="tag">Python</span><span class="tag">SQL Server</span><span class="tag">Windows Server</span><span class="tag">Airflow</span>
+                    </div>
+                    <a href="projects/project-detail.html?project=etl-automation" class="card-link">Ver Estudo de Caso &rarr;</a>
                 </div>
                 <div class="project-card" data-tech="python">
                     <h3>Plataforma Integrada de Governança de Dados e BI</h3>
                     <p>Modelagem de painéis de alta performance em Power BI e Metabase com controle granular de acesso, garantindo a governança, integridade de dados sensíveis e compliance regulatório.</p>
-                    <p><strong>Tecnologias:</strong> Power BI, Metabase, Governança, SQL</p>
-                    <a href="projects/project-detail.html?project=governance-bi">Ver Estudo de Caso</a>
+                    <div class="project-card-tags">
+                        <span class="tag">Power BI</span><span class="tag">Metabase</span><span class="tag">Governança</span><span class="tag">SQL</span>
+                    </div>
+                    <a href="projects/project-detail.html?project=governance-bi" class="card-link">Ver Estudo de Caso &rarr;</a>
                 </div>
             </div>
         </section>
