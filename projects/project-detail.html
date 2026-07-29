@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Projeto - Jhone Estefano</title>
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .project-detail-container {
@@ -126,17 +127,22 @@
 
         // Get project from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        let projectKey = urlParams.get('project');
-        
-        // Default to medallion-lake if not specified or not found
-        if (!projectKey || !projectsData[projectKey]) {
-            projectKey = "medallion-lake";
-        }
-
+        const projectKey = urlParams.get('project');
         const project = projectsData[projectKey];
+        const container = document.getElementById('project-content');
+
+        if (!project) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 0;">
+                    <h1 style="color: #888;">Projeto não encontrado</h1>
+                    <p>O estudo de caso solicitado não existe ou o link está incorreto.</p>
+                    <a href="../index.html#projects" class="back-link">&larr; Ver todos os projetos</a>
+                </div>
+            `;
+            document.title = "Projeto não encontrado - Portfólio Jhone Estefano";
+        } else {
 
         // Render project details
-        const container = document.getElementById('project-content');
         container.innerHTML = `
             <div class="project-header">
                 <h1>${project.title}</h1>
@@ -170,6 +176,7 @@
         
         // Update browser title
         document.title = `${project.title} - Portfólio Jhone Estefano`;
+        }
     </script>
 </body>
 </html>
