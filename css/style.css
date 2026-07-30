@@ -610,6 +610,56 @@ main {
 .timeline-item li { margin-bottom: 6px; }
 
 /* ==========================================================================
+   Education & certifications
+   ========================================================================== */
+.education-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.education-group h3 {
+    margin: 0 0 4px;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.credential-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.credential-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.credential-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.credential-main { display: flex; flex-direction: column; gap: 3px; }
+.credential-main strong { color: var(--color-text); font-size: 0.98rem; font-weight: 600; }
+.credential-org { color: var(--color-text-muted); font-size: 0.85rem; }
+
+.credential-period {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+/* ==========================================================================
    Project filters & cards
    ========================================================================== */
 #project-filters {
@@ -809,6 +859,11 @@ footer .footer-tag { font-family: var(--font-mono); font-size: 0.78rem; opacity:
     .hero-inner { grid-template-columns: 1fr; }
     .hero-visual { max-width: 480px; }
     .about-grid { grid-template-columns: 1fr; }
+    .education-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 520px) {
+    .credential-item { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
 
 @media (max-width: 768px) {
