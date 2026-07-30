@@ -80,6 +80,19 @@
                     "<strong>Segurança e Governança:</strong> Implementação de políticas de Row-Level Security (RLS) e matrizes de permissão controladas"
                 ],
                 outcome: "Mitigação total de acessos indevidos e garantia de compliance corporativo. A diretoria executiva passou a contar com relatórios interativos e dinâmicos de SLA operacional, identificando em segundos os gargalos operacionais e as causas-raiz de falhas de performance."
+            },
+            "data-patching-medallion": {
+                title: "Pipeline de Data Patching Cirúrgico em Arquitetura Medallion",
+                tags: ["Databricks", "PySpark", "Airflow", "Python", "Slack API"],
+                problem: "A manutenção de uma base com mais de 60 milhões de registros de CNPJs de empresas — fonte direta de dados para o aplicativo do cliente — esbarrava em um gargalo estrutural: qualquer correção pontual identificada pelo time de suporte, por menor que fosse, disparava um Full Load completo da tabela. Esse fluxo tradicional era computacionalmente caro e lento demais para o SLA que o negócio exigia, criando um descompasso entre a granularidade do problema (um único registro) e a escala da solução empregada para resolvê-lo (60 milhões de linhas reprocessadas).",
+                solution: "Arquitetei e implementei um pipeline de Data Patching parametrizado — internamente batizado de 'Flow Simplificado' — projetado para tratar cada correção como uma operação cirúrgica, e não como um reprocessamento em massa. A lógica relacional que sempre norteou meu trabalho com SQL foi replicada em escala distribuída: em vez de recriar tabelas inteiras, o pipeline aplica Upsert (Merge) diretamente nas camadas Bronze, Silver e Gold da Medallion Architecture, propagando a correção apenas onde ela é necessária. O Apache Airflow orquestra o fluxo através de uma DAG parametrizada, que recebe o CNPJ-alvo dinamicamente como argumento de execução, transformando um processo antes genérico em um fluxo sob demanda, disparado registro a registro. Para garantir resiliência operacional, o pipeline conta com checkpointing nativo do Spark: o estado da execução é persistido a cada etapa, permitindo que, em caso de falha, o job retome exatamente do ponto de interrupção, sem duplicar ou reprocessar dados já corrigidos (idempotência). A camada de observabilidade foi fechada com callbacks em Python no próprio Airflow, que capturam falhas de execução e disparam webhooks automáticos para o canal de suporte no Slack, com o log de erro anexado.",
+                techStack: [
+                    "<strong>Orquestração:</strong> Apache Airflow (Python) — DAG parametrizada, recebendo o CNPJ-alvo dinamicamente",
+                    "<strong>Processamento Distribuído:</strong> Databricks e PySpark, com lógica de Upsert/Merge nas camadas Bronze, Silver e Gold",
+                    "<strong>Resiliência e Idempotência:</strong> Checkpointing nativo do Spark para retomada de falhas sem duplicação de dados",
+                    "<strong>Observabilidade e DataOps:</strong> Slack API integrada via callbacks Python no Airflow, com alertas automáticos de falha e log de erro anexado ao canal de suporte"
+                ],
+                outcome: "O resultado direto foi a eliminação da dependência de Full Load para correções pontuais: o que antes exigia reprocessar 60 milhões de registros passou a ser resolvido com uma operação direcionada a um único CNPJ, propagada através das três camadas da Medallion. Isso reduziu de forma expressiva o custo computacional de cada correção e o tempo de resposta ao suporte, que passou a contar com alertas automáticos no Slack em caso de falha — eliminando o retrabalho manual de garimpar logs e comunicar erros de execução."
             }
         };
 
