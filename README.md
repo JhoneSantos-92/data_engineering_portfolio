@@ -35,7 +35,7 @@ data_engineering_portfolio/
 └── README.md
 ```
 
-##  Como Executar Localmente
+## Como Executar Localmente
 
 1. Clone este repositório:
    ```bash
@@ -47,7 +47,7 @@ data_engineering_portfolio/
    ```
 3. Abra o arquivo `index.html` em seu navegador de preferência (ou sirva com `python -m http.server`).
 
-##  Fluxo de Desenvolvimento
+## Fluxo de Desenvolvimento
 
 - `main` — produção, publicada via GitHub Pages
 - `dev` — desenvolvimento; mudanças são validadas aqui antes de ir para `main`
