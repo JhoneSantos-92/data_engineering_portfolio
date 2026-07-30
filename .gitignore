@@ -17,3 +17,14 @@ desktop.ini
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Python / PyInstaller
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+
+# Scripts pessoais soltos nesta pasta (nao relacionados ao portfolio)
+projects/auto_clicker.py
+projects/auto_clicker_icon.ico
