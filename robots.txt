@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jhonesantos-92.github.io/data_engineering_portfolio/sitemap.xml
