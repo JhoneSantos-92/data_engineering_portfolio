@@ -1,51 +1,56 @@
 # Data Engineering Portfolio - Jhone Estefano
 
-Este repositório contém o código-fonte do meu portfólio profissional de Engenharia de Dados. Aqui apresento meus principais projetos, habilidades técnicas e minha trajetória profissional na criação de soluções de dados robustas, escaláveis e automatizadas.
+🔗 **Site publicado:** https://jhonesantos-92.github.io/data_engineering_portfolio/
+
+Este repositório contém o código-fonte do meu portfólio profissional de Engenharia de Dados. Aqui apresento meus principais projetos, habilidades técnicas, formação e minha trajetória profissional na criação de soluções de dados robustas, escaláveis e automatizadas.
 
 ## 🚀 Tecnologias em Destaque
 
-- **Cloud:** AWS
-- **Processamento de Dados:** Python, PySpark, Databricks
-- **Orquestração:** Apache Airflow
-- **Bancos de Dados:** SQL (SQL Server, SQLite, PostgreSQL)
-- **Visualização de Dados:** Power BI, Metabase
+- **Cloud & Data Warehouse:** AWS (S3, Lambda, Glue), Snowflake
+- **Processamento de Dados:** Python, SQL, PySpark, Databricks
+- **Orquestração & Automação:** Apache Airflow, Power Automate
+- **Bancos de Dados & Formatos:** SQL Server, SQLite, Parquet, Avro
+- **Business Intelligence:** Power BI, Metabase, Qlik Sense
+- **Arquitetura de Dados:** Data Lakehouse, Medallion Architecture, ETL/ELT
 - **Versionamento:** Git & GitHub
+
+_(lista completa na seção "Stack técnica" do site)_
 
 ## 📂 Estrutura do Repositório
 
 ```bash
 data_engineering_portfolio/
 ├── css/
-│   └── style.css            # Estilização moderna e responsiva
+│   └── style.css              # Design system, temas claro/escuro, layout responsivo
 ├── js/
-│   └── main.js              # Lógica de filtragem interativa e scroll suave
+│   └── main.js                # Toggle de tema, menu mobile, scrollspy, filtros
 ├── projects/
-│   └── project-detail.html  # Detalhamento dinâmico dos estudos de caso
+│   └── project-detail.html    # Detalhamento dinâmico dos estudos de caso
 ├── images/
-│   └── architecture-diagram-placeholder.png
-├── data/                    # Diretório reservado para amostras de datasets
-└── README.md                # Documentação do portfólio
+│   ├── favicon.svg
+│   └── og-cover.png           # Imagem de preview para redes sociais
+├── data/                      # Diretório reservado para amostras de datasets
+├── robots.txt
+├── sitemap.xml
+└── README.md
 ```
 
 ## 🛠️ Como Executar Localmente
 
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/data_engineering_portfolio.git
+   git clone https://github.com/JhoneSantos-92/data_engineering_portfolio.git
    ```
 2. Navegue até a pasta:
    ```bash
    cd data_engineering_portfolio
    ```
-3. Abra o arquivo `index.html` em seu navegador de preferência.
+3. Abra o arquivo `index.html` em seu navegador de preferência (ou sirva com `python -m http.server`).
 
-## 📈 Próximos Passos & Projetos Futuros
+## 🌿 Fluxo de Desenvolvimento
 
-Este portfólio servirá como base para hospedar os estudos de caso dos meus pipelines de engenharia de dados. O próximo grande projeto a ser versionado aqui será um **Pipeline de Dados Autônomo**, construído utilizando as melhores práticas de mercado, incluindo:
-- Estrutura de branches organizada (`main`, `develop`, `feature/*`).
-- Fluxo rigoroso de Pull Requests (PRs) com revisões simuladas de arquitetura de dados.
-- Implementação de esteiras de ETL resilientes e monitoradas.
+- `main` — produção, publicada via GitHub Pages
+- `dev` — desenvolvimento; mudanças são validadas aqui antes de ir para `main`
 
 ---
-Desenvolvido por **Jhone Estefano dos Santos** 💻✨
-```
+Desenvolvido por **Jhone Estefano dos Santos**
