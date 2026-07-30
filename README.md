@@ -1,10 +1,10 @@
 # Data Engineering Portfolio - Jhone Estefano
 
-🔗 **Site publicado:** https://jhonesantos-92.github.io/data_engineering_portfolio/
+**Site publicado:** https://jhonesantos-92.github.io/data_engineering_portfolio/
 
 Este repositório contém o código-fonte do meu portfólio profissional de Engenharia de Dados. Aqui apresento meus principais projetos, habilidades técnicas, formação e minha trajetória profissional na criação de soluções de dados robustas, escaláveis e automatizadas.
 
-## 🚀 Tecnologias em Destaque
+## Tecnologias em Destaque
 
 - **Cloud & Data Warehouse:** AWS (S3, Lambda, Glue), Snowflake
 - **Processamento de Dados:** Python, SQL, PySpark, Databricks
@@ -16,7 +16,7 @@ Este repositório contém o código-fonte do meu portfólio profissional de Enge
 
 _(lista completa na seção "Stack técnica" do site)_
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```bash
 data_engineering_portfolio/
@@ -35,7 +35,7 @@ data_engineering_portfolio/
 └── README.md
 ```
 
-## 🛠️ Como Executar Localmente
+##  Como Executar Localmente
 
 1. Clone este repositório:
    ```bash
@@ -47,7 +47,7 @@ data_engineering_portfolio/
    ```
 3. Abra o arquivo `index.html` em seu navegador de preferência (ou sirva com `python -m http.server`).
 
-## 🌿 Fluxo de Desenvolvimento
+##  Fluxo de Desenvolvimento
 
 - `main` — produção, publicada via GitHub Pages
 - `dev` — desenvolvimento; mudanças são validadas aqui antes de ir para `main`
