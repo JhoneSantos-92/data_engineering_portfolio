@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truco Online | Jhone Estefano dos Santos</title>
+    <meta name="description" content="Truco Paulista completo em dupla contra a máquina: manilhas, truco/seis/nove/doze, mão de onze e sinais tradicionais. Projeto pessoal em HTML, CSS e JavaScript puro.">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <meta name="theme-color" content="#0b3d24">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/truco.css">
+</head>
+<body>
+    <header class="truco-header">
+        <a href="../index.html" class="logo"><span class="logo-dot">&gt;</span>_jhone.santos</a>
+        <h1>Truco Paulista</h1>
+        <div class="header-actions">
+            <button id="info-btn" class="btn btn-ghost" aria-label="Sinais do truco">Sinais &amp; Regras</button>
+            <button id="new-game-btn" class="btn btn-ghost">Novo Jogo</button>
+        </div>
+    </header>
+
+    <main class="truco-main">
+        <section class="scoreboard">
+            <div class="score-item">
+                <span class="score-label">Nós</span>
+                <span class="score-value" id="score-a">0</span>
+            </div>
+            <div class="score-item hand-info">
+                <span>Mão nº <span id="hand-number">0</span></span>
+            </div>
+            <div class="score-item">
+                <span class="score-label">Eles</span>
+                <span class="score-value" id="score-b">0</span>
+            </div>
+        </section>
+
+        <div class="table-wrap">
+            <div class="felt-table">
+                <div class="seat seat-top" id="seat-top">
+                    <span class="seat-name">Duda</span>
+                    <div class="seat-hand"></div>
+                </div>
+                <div class="seat seat-left" id="seat-left">
+                    <span class="seat-name">Naná</span>
+                    <div class="seat-hand"></div>
+                </div>
+                <div class="seat seat-right" id="seat-right">
+                    <span class="seat-name">Zeca</span>
+                    <div class="seat-hand"></div>
+                </div>
+
+                <div class="table-center">
+                    <div class="vira-box">
+                        <span class="vira-tag">Vira</span>
+                        <div id="vira-card" class="vira-card"></div>
+                        <span id="manilha-label" class="manilha-label"></span>
+                    </div>
+                    <div class="play-slots">
+                        <div class="slot slot-top" id="slot-top"></div>
+                        <div class="slot-row">
+                            <div class="slot slot-left" id="slot-left"></div>
+                            <div class="slot slot-right" id="slot-right"></div>
+                        </div>
+                        <div class="slot slot-bottom" id="slot-bottom"></div>
+                    </div>
+                </div>
+
+                <div class="seat seat-bottom" id="seat-bottom">
+                    <span class="seat-name">Você</span>
+                    <div class="seat-hand"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div id="action-bar" class="action-bar"></div>
+            <div id="signal-row" class="signal-row"></div>
+        </div>
+
+        <aside class="log-wrap">
+            <h2>Mesa</h2>
+            <div id="log-panel" class="log-panel"></div>
+        </aside>
+    </main>
+
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button id="info-close" class="modal-close" aria-label="Fechar">&times;</button>
+            <h2>Sinais &amp; Regras do Truco</h2>
+
+            <h3>Pontuação</h3>
+            <p>Vence a partida quem fizer 12 pontos primeiro. Cada mão vale 1 ponto, e pode ser aumentada gritando
+                <strong>Truco</strong> (3), <strong>Seis</strong> (6), <strong>Nove</strong> (9) e <strong>Doze</strong> (12).
+                Quem recebe o pedido pode aceitar, aumentar ou correr — quem corre entrega apenas o valor
+                que a mão valia antes daquele pedido.</p>
+
+            <h3>Manilhas</h3>
+            <p>A carta virada ("vira") define a manilha: é a carta seguinte na sequência
+                4-5-6-7-Q-J-K-A-2-3. As quatro manilhas são as cartas mais fortes do jogo, nesta ordem de força:
+                <strong>Ouros &lt; Espadas &lt; Copas &lt; Paus (Zap)</strong>.</p>
+
+            <h3>Mão de Onze</h3>
+            <p>Quando uma dupla chega a 11 pontos, a mão seguinte já nasce valendo 3 pontos e ninguém pode pedir
+                aumento. A dupla em mão de 11 só decide entre jogar (vale 3) ou correr (perde apenas 1 ponto).
+                Se as duas duplas estiverem em 11, é <strong>mão de ferro</strong>: todas as cartas da mesa
+                são reveladas antes de jogar.</p>
+
+            <h3>Sinais tradicionais</h3>
+            <p class="muted">Usados de olho no parceiro, sem o adversário perceber. Variam muito de região pra
+                região e de dupla pra dupla — combine antes de valer!</p>
+            <ul class="sinais-list">
+                <li><strong>😉 Piscar o olho</strong> — manilha de Paus (o Zap, carta mais forte do baralho).</li>
+                <li><strong>🤨 Levantar uma sobrancelha</strong> — manilha de Copas.</li>
+                <li><strong>😤 Encher uma bochecha de ar</strong> — manilha de Espadas.</li>
+                <li><strong>👅 Mostrar a ponta da língua</strong> — manilha de Ouros.</li>
+                <li><strong>💪 Levantar os dois ombros</strong> — par de 3.</li>
+                <li><strong>🤞 Mostrar o dedo mindinho</strong> — tem um Ás.</li>
+                <li><strong>🧔 Coçar o queixo</strong> — tem um Rei.</li>
+                <li><strong>👂 Mão na orelha</strong> — tem uma Dama.</li>
+                <li><strong>😕 Balançar a cabeça</strong> — "não tenho nada".</li>
+            </ul>
+            <p class="muted">Neste jogo, os 5 primeiros sinais aparecem como botões: eles avisam sua Duda (parceira)
+                sobre a força da sua mão e mudam um pouco a coragem dela para aceitar ou pedir aumento.</p>
+        </div>
+    </div>
+
+    <div id="end-modal" class="modal-overlay">
+        <div class="modal-box modal-box-center">
+            <h2 id="end-title">Fim de jogo</h2>
+            <p id="end-text"></p>
+            <button id="end-play-again" class="btn btn-primary">Jogar novamente</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/ui.js"></script>
+</body>
+</html>

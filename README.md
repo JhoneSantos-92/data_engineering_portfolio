@@ -26,6 +26,7 @@ data_engineering_portfolio/
 │   └── main.js                # Toggle de tema, menu mobile, scrollspy, filtros
 ├── projects/
 │   └── project-detail.html    # Detalhamento dinâmico dos estudos de caso
+├── truco/                     # Hobby: Truco Paulista jogável (HTML/CSS/JS puro)
 ├── images/
 │   ├── favicon.svg
 │   └── og-cover.png           # Imagem de preview para redes sociais
