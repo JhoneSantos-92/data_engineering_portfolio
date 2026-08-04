@@ -89,6 +89,8 @@ function createGame(logFn) {
         turnIndex: 0,
         table: [null, null, null, null],
         roundResults: [],
+        trickWinnerIndex: null,
+        trickResolution: null,
         stake: 1,
         pendingCall: null,
         callRight: null,
@@ -126,6 +128,8 @@ function startHand(G) {
     G.firstLeaderTeam = G.players[G.leaderIndex].team;
     G.table = [null, null, null, null];
     G.roundResults = [];
+    G.trickWinnerIndex = null;
+    G.trickResolution = null;
     G.stake = 1;
     G.pendingCall = null;
     G.callRight = null;
@@ -200,19 +204,28 @@ function resolveTrick(G) {
     if (result === 'D') G.log(`Vaza ${roundNum} empatada.`);
     else G.log(`Vaza ${roundNum} vencida por ${teamName(result)}.`);
 
-    const decided = decideHandWinner(G.roundResults, G.firstLeaderTeam);
+    let decided = decideHandWinner(G.roundResults, G.firstLeaderTeam);
+    if (!decided && G.roundResults.length >= 3) decided = G.firstLeaderTeam;
+
+    // Keep the 4 played cards on the table (with the winner highlighted in the
+    // UI) until finishTrick() runs, instead of clearing them immediately.
+    G.trickWinnerIndex = result === 'D' ? null : winnerIndex;
+    G.trickResolution = { result, winnerIndex, decided };
+    G.phase = 'trick-over';
+}
+
+function finishTrick(G) {
+    const resolution = G.trickResolution;
     G.table = [null, null, null, null];
+    G.trickResolution = null;
+    G.trickWinnerIndex = null;
+    if (!resolution) return;
 
-    if (decided) {
-        endHand(G, decided);
+    if (resolution.decided) {
+        endHand(G, resolution.decided);
         return;
     }
-    if (G.roundResults.length >= 3) {
-        endHand(G, G.firstLeaderTeam);
-        return;
-    }
-
-    if (result !== 'D') G.leaderIndex = winnerIndex;
+    if (resolution.result !== 'D') G.leaderIndex = resolution.winnerIndex;
     G.turnIndex = G.leaderIndex;
     G.phase = 'playing';
 }
@@ -246,9 +259,9 @@ function canCall(G, team) {
     return G.stake < 12 && !G.maoDeOnze && !G.maoDeFerro && (G.callRight === null || G.callRight === team);
 }
 
-function makeCall(G, byTeam) {
+function makeCall(G, byTeam, byPlayerName = null) {
     const level = nextLevel(G.stake);
-    G.pendingCall = { byTeam, level, respondingTeam: byTeam === 'A' ? 'B' : 'A', previousStake: G.stake };
+    G.pendingCall = { byTeam, byPlayerName, level, respondingTeam: byTeam === 'A' ? 'B' : 'A', previousStake: G.stake };
     G.log(`${teamName(byTeam)} pediu ${CALL_NAME[level]}! Vale ${level} pontos se aceito.`);
     G.phase = 'awaiting-response';
 }
@@ -335,7 +348,7 @@ function aiMaoOnzeDecision(G, team) {
 
 export {
     RANK_ORDER, SUITS, SUIT_INFO, SINAIS, CALL_NAME,
-    createGame, startHand, playCard, advanceTurnAfterPlay, resolveTrick,
+    createGame, startHand, playCard, advanceTurnAfterPlay, resolveTrick, finishTrick,
     endHand, runFromHand, makeCall, acceptCall, runFromCall, raiseCall, canCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
     cardStrength, cardLabel, handStrength, teamName, nextLevel, teamHandStrength,

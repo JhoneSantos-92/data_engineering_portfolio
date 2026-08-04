@@ -1,6 +1,6 @@
 import {
     SUIT_INFO, SINAIS, CALL_NAME,
-    createGame, startHand, playCard, advanceTurnAfterPlay,
+    createGame, startHand, playCard, advanceTurnAfterPlay, finishTrick,
     runFromHand, makeCall, acceptCall, runFromCall, raiseCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
     cardLabel, teamName, nextLevel, canCall,
@@ -126,10 +126,10 @@ function render() {
     el.seatRight.classList.toggle('turn-active', G.phase === 'playing' && G.turnIndex === 1);
     el.seatBottom.classList.toggle('turn-active', G.phase === 'playing' && G.turnIndex === 0);
 
-    renderSlot(el.slotTop, G.table[2]);
-    renderSlot(el.slotLeft, G.table[3]);
-    renderSlot(el.slotRight, G.table[1]);
-    renderSlot(el.slotBottom, G.table[0]);
+    renderSlot(el.slotTop, G.table[2], 2);
+    renderSlot(el.slotLeft, G.table[3], 3);
+    renderSlot(el.slotRight, G.table[1], 1);
+    renderSlot(el.slotBottom, G.table[0], 0);
 
     renderActionBar();
 }
@@ -157,15 +157,18 @@ function renderSeat(container, player, isHuman) {
     }
 }
 
-function renderSlot(container, entry) {
+function renderSlot(container, entry, playerIndex) {
     container.innerHTML = '';
+    const isWinner = G.phase === 'trick-over' && G.trickWinnerIndex === playerIndex;
+    container.classList.toggle('slot-winner', isWinner);
     if (!entry) return;
-    container.appendChild(entry.hidden ? cardBackEl() : cardEl(entry.card));
+    const cardDiv = entry.hidden ? cardBackEl() : cardEl(entry.card);
+    if (isWinner) cardDiv.classList.add('card-winner');
+    container.appendChild(cardDiv);
 }
 
 function renderActionBar() {
     el.actionBar.innerHTML = '';
-    el.signalRow.style.display = 'none';
     clearHumanTimer();
 
     if (G.matchOver) {
@@ -199,6 +202,12 @@ function renderActionBar() {
         return;
     }
 
+    if (G.phase === 'trick-over') {
+        const r = G.trickResolution;
+        el.actionBar.innerHTML = `<p class="prompt">${r && r.result === 'D' ? 'Vaza empatada.' : `Vaza vencida por ${teamName(r.result)}!`}</p>`;
+        return;
+    }
+
     if (G.phase === 'hand-over' || G.phase === 'mao11-bot') {
         el.actionBar.innerHTML = '<p class="prompt">Preparando a próxima mão...</p>';
         if (G.phase === 'hand-over' && G.lastHandWinner) {
@@ -228,13 +237,14 @@ function renderActionBar() {
                 tick();
             });
         }
-        el.signalRow.style.display = 'flex';
         startHumanTimer(() => { runFromCall(G); tick(); });
         return;
     }
 
     if (G.phase === 'awaiting-response') {
-        el.actionBar.innerHTML = `<p class="prompt">Aguardando resposta de ${teamName(G.pendingCall.respondingTeam)}...</p>`;
+        const call = G.pendingCall;
+        const caller = call.byPlayerName || teamName(call.byTeam);
+        el.actionBar.innerHTML = `<p class="prompt">${caller} pediu ${CALL_NAME[call.level]}! Aguardando resposta de ${teamName(call.respondingTeam)}...</p>`;
         return;
     }
 
@@ -247,7 +257,7 @@ function renderActionBar() {
         if (canCall(G, 'A')) {
             const callLevel = nextLevel(G.stake);
             addButton(`Pedir ${CALL_NAME[callLevel]}`, () => {
-                makeCall(G, 'A');
+                makeCall(G, 'A', 'Você');
                 showBanner(`Você pediu ${CALL_NAME[callLevel]}!`);
                 tick();
             });
@@ -260,7 +270,6 @@ function renderActionBar() {
             }, true);
             hideBtn.title = 'Depois da 1ª rodada você pode "queimar" uma carta virada, sem revelar seu valor.';
         }
-        el.signalRow.style.display = 'flex';
         startHumanTimer(() => {
             const card = aiPickCard(G, 0);
             playCard(G, 0, card, false);
@@ -312,6 +321,12 @@ function tick() {
     if (G.matchOver) return;
     if (scheduled) return;
 
+    if (G.phase === 'trick-over') {
+        finishTrick(G);
+        tick();
+        return;
+    }
+
     if (G.phase === 'hand-over') {
         scheduled = true;
         setTimeout(() => {
@@ -361,7 +376,7 @@ function tick() {
         if (aiConsiderCall(G, idx)) {
             const player = G.players[idx];
             const level = nextLevel(G.stake);
-            makeCall(G, player.team);
+            makeCall(G, player.team, player.name);
             showBanner(`${player.name} pediu ${CALL_NAME[level]}!`);
             tick();
         } else {

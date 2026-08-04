@@ -142,7 +142,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 640px;
-    height: 520px;
+    height: 600px;
     background:
         radial-gradient(ellipse at center, var(--felt-light) 0%, var(--felt-dark) 65%, var(--felt-edge) 100%);
     border: 10px solid #3a2416;
@@ -253,6 +253,21 @@ body {
     height: 66px;
     border: 1.5px dashed rgba(255,255,255,0.25);
     border-radius: 7px;
+    transition: box-shadow 0.2s ease;
+}
+.slot.slot-winner {
+    border-style: solid;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(232, 194, 95, 0.35), 0 0 16px rgba(232, 194, 95, 0.55);
+}
+.card.card-winner {
+    box-shadow: 0 0 0 3px var(--gold), 0 6px 18px rgba(232, 194, 95, 0.55);
+    transform: translateY(-4px) scale(1.06);
+    animation: cardWinnerPulse 1.1s ease-in-out infinite;
+}
+@keyframes cardWinnerPulse {
+    0%, 100% { box-shadow: 0 0 0 3px var(--gold), 0 6px 18px rgba(232, 194, 95, 0.55); }
+    50% { box-shadow: 0 0 0 5px var(--gold-soft), 0 8px 22px rgba(232, 194, 95, 0.75); }
 }
 
 .control-panel {
@@ -324,7 +339,7 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.95); }
 }
 
-.signal-row { display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.signal-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .signal-label { font-size: 0.75rem; color: var(--text-muted); margin-right: 4px; }
 .signal-btn {
     width: 38px;
@@ -432,12 +447,12 @@ body {
     .truco-main { grid-template-columns: 1fr; }
     .control-panel, .log-wrap { grid-column: 1 / -1; }
     .log-wrap { max-height: 240px; }
-    .felt-table { height: 460px; }
+    .felt-table { height: 530px; }
 }
 
 @media (max-width: 520px) {
     .truco-header h1 { font-size: 1.05rem; order: 3; width: 100%; text-align: center; }
-    .felt-table { height: 400px; border-radius: 24px; }
+    .felt-table { height: 460px; border-radius: 24px; }
     .card { width: 36px; height: 52px; }
     .card-rank { font-size: 0.85rem; }
     .card-suit { font-size: 0.9rem; }
@@ -451,8 +466,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .btn, .card, .signal-btn, .seat { transition: none; }
+    .btn, .card, .signal-btn, .seat, .slot { transition: none; }
     .call-banner.show { animation: none; opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     .call-banner { transform: translateX(-50%) translateY(0) scale(1); }
     .modal-overlay.open .modal-box { animation: none; }
+    .card.card-winner { animation: none; transform: none; }
 }
