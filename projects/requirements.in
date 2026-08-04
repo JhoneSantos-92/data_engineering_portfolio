@@ -1,0 +1,22 @@
+# Dependencias diretas do pipeline. Versoes resolvidas e travadas em requirements.txt
+# via `pip-compile requirements.in`. Nao editar requirements.txt na mao.
+
+# Ingestao / manipulacao de dados
+pandas
+polars
+pyarrow
+duckdb
+sqlalchemy
+requests
+python-dotenv
+openpyxl
+
+# Data Quality
+great-expectations
+
+# Validacao de schema/dados (usado internamente por libs, mantido explicito por ser usado no codigo)
+pydantic
+
+# Testes
+pytest
+pytest-cov

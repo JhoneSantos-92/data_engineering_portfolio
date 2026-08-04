@@ -24,6 +24,8 @@ __pycache__/
 build/
 dist/
 *.spec
+.venv/
+venv/
 
 # Scripts pessoais soltos nesta pasta (nao relacionados ao portfolio)
 projects/auto_clicker.py
