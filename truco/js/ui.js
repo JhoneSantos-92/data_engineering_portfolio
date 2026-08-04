@@ -4,6 +4,7 @@ import {
     runFromHand, makeCall, acceptCall, runFromCall, raiseCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
     cardLabel, teamName, nextLevel, canCall,
+    beginTeamASignalPhase, logSilentOpponentSignal, sendPartnerSignal,
 } from './truco.js';
 
 const BOT_DELAY = 850;
@@ -179,7 +180,8 @@ function renderActionBar() {
     if (G.phase === 'ferro-reveal') {
         el.actionBar.innerHTML = '<p class="prompt">Mão de ferro! Todas as cartas na mesa. Boa sorte.</p>';
         addButton('Continuar', () => {
-            G.phase = 'playing';
+            logSilentOpponentSignal(G);
+            beginTeamASignalPhase(G);
             tick();
         });
         return;
@@ -188,6 +190,7 @@ function renderActionBar() {
     if (G.phase === 'mao11-human') {
         el.actionBar.innerHTML = '<p class="prompt">Mão de Onze! Sua dupla está com 11 pontos. Vocês veem as cartas uma da outra (mão aberta). Jogar vale 3, correr entrega 1 ponto.</p>';
         addButton('Jogar (vale 3)', () => {
+            logSilentOpponentSignal(G);
             G.phase = 'playing';
             tick();
         });
@@ -197,6 +200,19 @@ function renderActionBar() {
         }, true);
         startHumanTimer(() => {
             runFromHand(G, 'A', 1);
+            tick();
+        });
+        return;
+    }
+
+    if (G.phase === 'signal-phase') {
+        const s = G.dudaSignal;
+        el.actionBar.innerHTML = `<p class="prompt">Duda sinalizou: ${s.icon} ${s.desc} Agora é sua vez de sinalizar para ela antes da 1ª carta.</p>`;
+        showBanner(`Duda sinalizou: ${s.icon}`);
+        startHumanTimer(() => {
+            const nada = SINAIS.find((x) => x.id === 'nada');
+            sendPartnerSignal(G, nada.boost);
+            G.log('Você não sinalizou a tempo — sinal de "não tenho nada" enviado automaticamente.');
             tick();
         });
         return;
@@ -345,7 +361,7 @@ function tick() {
             const decision = aiMaoOnzeDecision(G, team);
             G.log(`${teamName(team)} decidiu ${decision === 'jogar' ? 'jogar (vale 3)' : 'correr (perde 1)'} na mão de onze.`);
             if (decision === 'correr') runFromHand(G, team, 1);
-            else G.phase = 'playing';
+            else beginTeamASignalPhase(G);
             tick();
         }, BOT_DELAY);
         return;
@@ -397,9 +413,11 @@ function buildSignalRow() {
         btn.title = s.desc;
         btn.innerHTML = `<span class="signal-icon">${s.icon}</span>`;
         btn.addEventListener('click', () => {
-            G.partnerSignal = s.boost;
+            const wasSignalPhase = G.phase === 'signal-phase';
+            sendPartnerSignal(G, s.boost);
             G.log(`Você sinalizou: ${s.desc}`);
-            render();
+            if (wasSignalPhase) tick();
+            else render();
         });
         el.signalRow.appendChild(btn);
     });

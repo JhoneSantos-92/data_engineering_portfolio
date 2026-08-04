@@ -100,6 +100,7 @@ function createGame(logFn) {
         maoOnzeTeam: null,
         maoDeFerro: false,
         partnerSignal: 0,
+        dudaSignal: null,
         matchOver: false,
         lastHandWinner: null,
         phase: 'idle',
@@ -138,6 +139,7 @@ function startHand(G) {
     G.maoOnzeTeam = null;
     G.maoDeFerro = false;
     G.lastHandWinner = null;
+    G.dudaSignal = null;
 
     G.log(`--- Mão ${G.handNumber} --- vira: ${cardLabel(G.vira)} (manilha: ${G.manilhaRank})`);
 
@@ -156,7 +158,37 @@ function startHand(G) {
         G.phase = G.maoOnzeTeam === 'A' ? 'mao11-human' : 'mao11-bot';
         return;
     }
-    G.phase = 'playing';
+
+    // Hand normal: as duas duplas trocam sinais antes da 1a carta. A troca da
+    // dupla B fica invisivel para o jogador; a da dupla A (Duda -> voce) e o
+    // que trava o jogo ate voce responder.
+    logSilentOpponentSignal(G);
+    beginTeamASignalPhase(G);
+}
+
+function computeDudaSignal(G) {
+    const duda = G.players[2];
+    const manilhas = duda.hand.filter((c) => c.rank === G.manilhaRank);
+    if (manilhas.length === 0) return SINAIS.find((s) => s.id === 'nada');
+    manilhas.sort((a, b) => SUIT_MANILHA_RANK[b.suit] - SUIT_MANILHA_RANK[a.suit]);
+    const suitToSignalId = { P: 'paus', C: 'copas', E: 'espadas', O: 'ouros' };
+    return SINAIS.find((s) => s.id === suitToSignalId[manilhas[0].suit]);
+}
+
+function beginTeamASignalPhase(G) {
+    const signal = computeDudaSignal(G);
+    G.dudaSignal = signal;
+    G.log(`Duda sinalizou: ${signal.icon} ${signal.desc}`);
+    G.phase = 'signal-phase';
+}
+
+function logSilentOpponentSignal(G) {
+    G.log('Zeca e Naná trocam sinais em silêncio, fora da sua vista.');
+}
+
+function sendPartnerSignal(G, boost) {
+    G.partnerSignal = boost;
+    if (G.phase === 'signal-phase') G.phase = 'playing';
 }
 
 function teamHandStrength(G, team) {
@@ -352,5 +384,5 @@ export {
     endHand, runFromHand, makeCall, acceptCall, runFromCall, raiseCall, canCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
     cardStrength, cardLabel, handStrength, teamName, nextLevel, teamHandStrength,
-    tableEntryStrength,
+    tableEntryStrength, beginTeamASignalPhase, logSilentOpponentSignal, sendPartnerSignal,
 };
