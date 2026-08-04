@@ -289,6 +289,41 @@ body {
 }
 .turn-timer[hidden] { display: none; }
 
+.call-banner {
+    position: fixed;
+    top: 84px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px) scale(0.9);
+    background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+    color: #22190a;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 12px 26px;
+    border-radius: 999px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 60;
+    white-space: nowrap;
+    transition: opacity 0.25s ease;
+}
+.call-banner.banner-win {
+    background: linear-gradient(135deg, #4fae6b, #7fd89a);
+    color: #0c2814;
+}
+.call-banner.banner-lose {
+    background: linear-gradient(135deg, #c85a4c, #e68d80);
+    color: #2a0f0a;
+}
+.call-banner.show { animation: bannerPop 2.4s ease forwards; }
+@keyframes bannerPop {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.85); }
+    12% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.05); }
+    20% { transform: translateX(-50%) translateY(0) scale(1); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.95); }
+}
+
 .signal-row { display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .signal-label { font-size: 0.75rem; color: var(--text-muted); margin-right: 4px; }
 .signal-btn {
@@ -346,6 +381,11 @@ body {
     padding: 20px;
 }
 .modal-overlay.open { display: flex; }
+.modal-overlay.open .modal-box { animation: modalIn 0.25s ease; }
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1); }
+}
 
 .modal-box {
     position: relative;
@@ -407,4 +447,12 @@ body {
     .seat-right { right: 6px; }
     .score-value { font-size: 1.6rem; }
     .scoreboard { gap: 20px; }
+    .call-banner { top: 64px; font-size: 0.9rem; padding: 10px 18px; white-space: normal; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn, .card, .signal-btn, .seat { transition: none; }
+    .call-banner.show { animation: none; opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    .call-banner { transform: translateX(-50%) translateY(0) scale(1); }
+    .modal-overlay.open .modal-box { animation: none; }
 }

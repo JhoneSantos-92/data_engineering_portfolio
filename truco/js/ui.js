@@ -7,6 +7,7 @@ import {
 } from './truco.js';
 
 const BOT_DELAY = 850;
+const PLAY_TURN_DELAY = 3000;
 const TURN_SECONDS = 10;
 
 const el = {
@@ -26,6 +27,7 @@ const el = {
     log: document.getElementById('log-panel'),
     actionBar: document.getElementById('action-bar'),
     turnTimer: document.getElementById('turn-timer'),
+    callBanner: document.getElementById('call-banner'),
     signalRow: document.getElementById('signal-row'),
     newGameBtn: document.getElementById('new-game-btn'),
     infoBtn: document.getElementById('info-btn'),
@@ -65,6 +67,19 @@ function startHumanTimer(onExpire) {
             onExpire();
         }
     }, 1000);
+}
+
+let bannerTimeout = null;
+
+function showBanner(text, variant) {
+    el.callBanner.textContent = text;
+    el.callBanner.className = 'call-banner' + (variant ? ` banner-${variant}` : '');
+    void el.callBanner.offsetWidth;
+    el.callBanner.classList.add('show');
+    if (bannerTimeout) clearTimeout(bannerTimeout);
+    bannerTimeout = setTimeout(() => {
+        el.callBanner.classList.remove('show');
+    }, 2400);
 }
 
 function logMessage(msg) {
@@ -186,6 +201,17 @@ function renderActionBar() {
 
     if (G.phase === 'hand-over' || G.phase === 'mao11-bot') {
         el.actionBar.innerHTML = '<p class="prompt">Preparando a próxima mão...</p>';
+        if (G.phase === 'hand-over' && G.lastHandWinner) {
+            showBanner(
+                G.lastHandWinner === 'A' ? '🎉 Vitória da mão!' : '😕 Vocês perderam a mão',
+                G.lastHandWinner === 'A' ? 'win' : 'lose'
+            );
+        }
+        return;
+    }
+
+    if (G.phase === 'awaiting-response' && !G.pendingCall) {
+        el.actionBar.innerHTML = '<p class="prompt">Aguardando...</p>';
         return;
     }
 
@@ -194,7 +220,14 @@ function renderActionBar() {
         el.actionBar.innerHTML = `<p class="prompt">${teamName(call.byTeam)} pediu ${CALL_NAME[call.level]}! Vale ${call.level} pontos.</p>`;
         addButton('Aceitar', () => { acceptCall(G); tick(); });
         addButton('Correr', () => { runFromCall(G); tick(); }, true);
-        if (call.level < 12) addButton(`Aumentar p/ ${CALL_NAME[nextLevel(call.level)]}`, () => { raiseCall(G); tick(); });
+        if (call.level < 12) {
+            const raisedLevel = nextLevel(call.level);
+            addButton(`Aumentar p/ ${CALL_NAME[raisedLevel]}`, () => {
+                raiseCall(G);
+                showBanner(`Você pediu ${CALL_NAME[raisedLevel]}!`);
+                tick();
+            });
+        }
         el.signalRow.style.display = 'flex';
         startHumanTimer(() => { runFromCall(G); tick(); });
         return;
@@ -212,7 +245,12 @@ function renderActionBar() {
             ? '<p class="prompt">Sua vez: jogue uma carta, peça um aumento ou jogue uma carta virada.</p>'
             : '<p class="prompt">Sua vez: jogue uma carta ou peça um aumento.</p>';
         if (canCall(G, 'A')) {
-            addButton(`Pedir ${CALL_NAME[nextLevel(G.stake)]}`, () => { makeCall(G, 'A'); tick(); });
+            const callLevel = nextLevel(G.stake);
+            addButton(`Pedir ${CALL_NAME[callLevel]}`, () => {
+                makeCall(G, 'A');
+                showBanner(`Você pediu ${CALL_NAME[callLevel]}!`);
+                tick();
+            });
         }
         if (canHide) {
             const hideBtn = addButton('🂠 Jogar virada', () => {
@@ -250,11 +288,21 @@ function onHumanPlay(card) {
     playHiddenMode = false;
     playCard(G, 0, card, hidden);
     advanceTurnAfterPlay(G);
-    tick();
+    afterCardPlayed();
+}
+
+function afterCardPlayed() {
+    render();
+    if (G.matchOver) return;
+    scheduled = true;
+    setTimeout(() => {
+        scheduled = false;
+        tick();
+    }, PLAY_TURN_DELAY);
 }
 
 function showEndModal() {
-    el.endTitle.textContent = G.winner === 'A' ? 'Você venceu!' : 'Você perdeu!';
+    el.endTitle.textContent = G.winner === 'A' ? '🏆 Vitória!' : '💔 Derrota';
     el.endText.textContent = `Placar final: Nós ${G.score.A} x ${G.score.B} Eles.`;
     el.endModal.classList.add('open');
 }
@@ -288,33 +336,40 @@ function tick() {
         return;
     }
 
-    if (G.phase === 'awaiting-response' && G.pendingCall.respondingTeam === 'B') {
+    if (G.phase === 'awaiting-response' && G.pendingCall && G.pendingCall.respondingTeam === 'B') {
         scheduled = true;
         setTimeout(() => {
             scheduled = false;
+            if (!G.pendingCall) { tick(); return; }
             const decision = aiRespondToCall(G);
             if (decision === 'accept') acceptCall(G);
             else if (decision === 'run') runFromCall(G);
-            else raiseCall(G);
+            else {
+                const call = G.pendingCall;
+                const newLevel = nextLevel(call.level);
+                const newCaller = call.respondingTeam;
+                raiseCall(G);
+                showBanner(`${teamName(newCaller)} pediu ${CALL_NAME[newLevel]}!`);
+            }
             tick();
         }, BOT_DELAY);
         return;
     }
 
     if (G.phase === 'playing' && G.turnIndex !== 0) {
-        scheduled = true;
-        setTimeout(() => {
-            scheduled = false;
-            const idx = G.turnIndex;
-            if (aiConsiderCall(G, idx)) {
-                makeCall(G, G.players[idx].team);
-            } else {
-                const card = aiPickCard(G, idx);
-                playCard(G, idx, card);
-                advanceTurnAfterPlay(G);
-            }
+        const idx = G.turnIndex;
+        if (aiConsiderCall(G, idx)) {
+            const player = G.players[idx];
+            const level = nextLevel(G.stake);
+            makeCall(G, player.team);
+            showBanner(`${player.name} pediu ${CALL_NAME[level]}!`);
             tick();
-        }, BOT_DELAY);
+        } else {
+            const card = aiPickCard(G, idx);
+            playCard(G, idx, card);
+            advanceTurnAfterPlay(G);
+            afterCardPlayed();
+        }
         return;
     }
 }

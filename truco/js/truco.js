@@ -70,11 +70,11 @@ function decideHandWinner(results, firstLeaderTeam) {
 }
 
 const SINAIS = [
-    { id: 'zap', icon: '😉', label: 'Piscar o olho', desc: 'Sinal do Zap: você tem a manilha de Paus, a carta mais forte do jogo.', boost: 3 },
-    { id: 'copas', icon: '🤨', label: 'Levantar a sobrancelha', desc: 'Sinal da manilha de Copas.', boost: 2 },
-    { id: 'tresa', icon: '💪', label: 'Levantar os ombros', desc: 'Sinal de par de 3 (duas cartas três na mão).', boost: 2 },
-    { id: 'as', icon: '🤞', label: 'Mostrar o mindinho', desc: 'Sinal de Ás na mão.', boost: 1 },
-    { id: 'nada', icon: '😕', label: 'Balançar a cabeça', desc: 'Sinal de mão fraca: "não tenho nada".', boost: -3 },
+    { id: 'paus', icon: '😉', label: 'Piscar o olho', desc: 'Sinal do Zap: você tem a manilha de Paus, a carta mais forte do jogo.', boost: 4 },
+    { id: 'copas', icon: '🤨', label: 'Levantar a sobrancelha', desc: 'Sinal da manilha de Copas.', boost: 3 },
+    { id: 'espadas', icon: '🙂‍↔️', label: 'Balançar o rosto', desc: 'Sinal da manilha de Espadas.', boost: 2 },
+    { id: 'ouros', icon: '😛', label: 'Mostrar a língua', desc: 'Sinal da manilha de Ouros.', boost: 1 },
+    { id: 'nada', icon: '😮‍💨', label: 'Suspirar', desc: 'Sinal de mão fraca: "não tenho nada".', boost: -3 },
 ];
 
 function createGame(logFn) {
@@ -99,6 +99,7 @@ function createGame(logFn) {
         maoDeFerro: false,
         partnerSignal: 0,
         matchOver: false,
+        lastHandWinner: null,
         phase: 'idle',
         log: logFn || (() => {}),
     };
@@ -132,6 +133,7 @@ function startHand(G) {
     G.maoDeOnze = false;
     G.maoOnzeTeam = null;
     G.maoDeFerro = false;
+    G.lastHandWinner = null;
 
     G.log(`--- Mão ${G.handNumber} --- vira: ${cardLabel(G.vira)} (manilha: ${G.manilhaRank})`);
 
@@ -217,6 +219,7 @@ function resolveTrick(G) {
 
 function endHand(G, winnerTeam) {
     G.score[winnerTeam] += G.stake;
+    G.lastHandWinner = winnerTeam;
     G.log(`${teamName(winnerTeam)} venceu a mão e soma ${G.stake} ponto(s). Placar: Nós ${G.score.A} x ${G.score.B} Eles.`);
     G.phase = 'hand-over';
     if (G.score[winnerTeam] >= 12) {
@@ -228,6 +231,7 @@ function endHand(G, winnerTeam) {
 
 function runFromHand(G, runningTeam, points) {
     const otherTeam = runningTeam === 'A' ? 'B' : 'A';
+    G.lastHandWinner = otherTeam;
     G.log(`${teamName(runningTeam)} correu. ${teamName(otherTeam)} ganha ${points} ponto(s).`);
     G.score[otherTeam] += points;
     G.phase = 'hand-over';
@@ -250,6 +254,7 @@ function makeCall(G, byTeam) {
 }
 
 function acceptCall(G) {
+    if (!G.pendingCall) return;
     G.log(`${teamName(G.pendingCall.respondingTeam)} aceitou. Valendo ${G.pendingCall.level} pontos.`);
     G.stake = G.pendingCall.level;
     G.callRight = G.pendingCall.respondingTeam;
@@ -258,12 +263,14 @@ function acceptCall(G) {
 }
 
 function runFromCall(G) {
+    if (!G.pendingCall) return;
     const call = G.pendingCall;
     G.pendingCall = null;
     runFromHand(G, call.respondingTeam, call.previousStake);
 }
 
 function raiseCall(G) {
+    if (!G.pendingCall) return;
     const call = G.pendingCall;
     G.stake = call.level;
     G.callRight = call.respondingTeam;
