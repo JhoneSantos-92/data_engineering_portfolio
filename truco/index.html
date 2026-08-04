@@ -78,6 +78,7 @@
         </div>
 
         <div class="control-panel">
+            <div id="turn-timer" class="turn-timer" hidden></div>
             <div id="action-bar" class="action-bar"></div>
             <div id="signal-row" class="signal-row"></div>
         </div>
@@ -106,9 +107,20 @@
 
             <h3>Mão de Onze</h3>
             <p>Quando uma dupla chega a 11 pontos, a mão seguinte já nasce valendo 3 pontos e ninguém pode pedir
-                aumento. A dupla em mão de 11 só decide entre jogar (vale 3) ou correr (perde apenas 1 ponto).
+                aumento. Nessa mão, os dois parceiros jogam de <strong>mão aberta</strong>: veem as cartas um do
+                outro antes de decidir entre jogar (vale 3) ou correr (perde apenas 1 ponto).
                 Se as duas duplas estiverem em 11, é <strong>mão de ferro</strong>: todas as cartas da mesa
                 são reveladas antes de jogar.</p>
+
+            <h3>Carta virada</h3>
+            <p>A partir da 2ª rodada (nunca na 1ª), você pode "queimar" uma carta virada em vez de jogá-la
+                normalmente: ela vale automaticamente a rodada mais fraca possível, mas o adversário nunca
+                descobre qual carta era. É uma jogada de blefe, usada pra não entregar informação sobre sua mão.</p>
+
+            <h3>Tempo de decisão</h3>
+            <p>Você tem 10 segundos por decisão (jogar carta, aceitar/correr/aumentar, ou mão de onze). Se o
+                tempo acabar, o jogo decide por você da forma mais segura: joga a carta mais fraca disponível
+                ou corre.</p>
 
             <h3>Sinais tradicionais</h3>
             <p class="muted">Usados de olho no parceiro, sem o adversário perceber. Variam muito de região pra

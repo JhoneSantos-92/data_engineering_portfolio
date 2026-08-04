@@ -91,9 +91,11 @@ function createGame(logFn) {
         roundResults: [],
         stake: 1,
         pendingCall: null,
+        callRight: null,
         score: { A: 0, B: 0 },
         handNumber: 0,
         maoDeOnze: false,
+        maoOnzeTeam: null,
         maoDeFerro: false,
         partnerSignal: 0,
         matchOver: false,
@@ -125,8 +127,10 @@ function startHand(G) {
     G.roundResults = [];
     G.stake = 1;
     G.pendingCall = null;
+    G.callRight = null;
     G.partnerSignal = 0;
     G.maoDeOnze = false;
+    G.maoOnzeTeam = null;
     G.maoDeFerro = false;
 
     G.log(`--- Mão ${G.handNumber} --- vira: ${cardLabel(G.vira)} (manilha: ${G.manilhaRank})`);
@@ -140,10 +144,10 @@ function startHand(G) {
     }
     if (G.score.A === 11 || G.score.B === 11) {
         G.maoDeOnze = true;
+        G.maoOnzeTeam = G.score.A === 11 ? 'A' : 'B';
         G.stake = 3;
-        const team = G.score.A === 11 ? 'A' : 'B';
-        G.log(`MÃO DE ONZE para ${teamName(team)}! Vale 3 pontos. Não é possível pedir aumento.`);
-        G.phase = team === 'A' ? 'mao11-human' : 'mao11-bot';
+        G.log(`MÃO DE ONZE para ${teamName(G.maoOnzeTeam)}! Vale 3 pontos. A dupla vê as cartas uma da outra (mão aberta) e só pode jogar ou correr.`);
+        G.phase = G.maoOnzeTeam === 'A' ? 'mao11-human' : 'mao11-bot';
         return;
     }
     G.phase = 'playing';
@@ -153,11 +157,15 @@ function teamHandStrength(G, team) {
     return G.players.filter((p) => p.team === team).reduce((s, p) => s + handStrength(p.hand, G.manilhaRank), 0);
 }
 
-function playCard(G, playerIndex, card) {
+function tableEntryStrength(entry, manilhaRank) {
+    return entry.hidden ? -1 : cardStrength(entry.card, manilhaRank);
+}
+
+function playCard(G, playerIndex, card, hidden = false) {
     const player = G.players[playerIndex];
     player.hand = player.hand.filter((c) => !(c.rank === card.rank && c.suit === card.suit));
-    G.table[playerIndex] = card;
-    G.log(`${player.name} jogou ${cardLabel(card)}.`);
+    G.table[playerIndex] = { card, hidden };
+    G.log(hidden ? `${player.name} jogou uma carta virada.` : `${player.name} jogou ${cardLabel(card)}.`);
 }
 
 function advanceTurnAfterPlay(G) {
@@ -171,7 +179,7 @@ function advanceTurnAfterPlay(G) {
 }
 
 function resolveTrick(G) {
-    const strengths = G.table.map((c) => cardStrength(c, G.manilhaRank));
+    const strengths = G.table.map((entry) => tableEntryStrength(entry, G.manilhaRank));
     const max = Math.max(...strengths);
     const topPlayers = strengths.map((s, i) => (s === max ? i : -1)).filter((i) => i >= 0);
     const teams = new Set(topPlayers.map((i) => G.players[i].team));
@@ -230,6 +238,10 @@ function runFromHand(G, runningTeam, points) {
     }
 }
 
+function canCall(G, team) {
+    return G.stake < 12 && !G.maoDeOnze && !G.maoDeFerro && (G.callRight === null || G.callRight === team);
+}
+
 function makeCall(G, byTeam) {
     const level = nextLevel(G.stake);
     G.pendingCall = { byTeam, level, respondingTeam: byTeam === 'A' ? 'B' : 'A', previousStake: G.stake };
@@ -240,6 +252,7 @@ function makeCall(G, byTeam) {
 function acceptCall(G) {
     G.log(`${teamName(G.pendingCall.respondingTeam)} aceitou. Valendo ${G.pendingCall.level} pontos.`);
     G.stake = G.pendingCall.level;
+    G.callRight = G.pendingCall.respondingTeam;
     G.pendingCall = null;
     G.phase = 'playing';
 }
@@ -253,6 +266,7 @@ function runFromCall(G) {
 function raiseCall(G) {
     const call = G.pendingCall;
     G.stake = call.level;
+    G.callRight = call.respondingTeam;
     G.log(`${teamName(call.respondingTeam)} aceitou e já aumentou!`);
     makeCall(G, call.respondingTeam);
 }
@@ -262,7 +276,7 @@ function raiseCall(G) {
 function aiPickCard(G, playerIndex) {
     const player = G.players[playerIndex];
     const hand = player.hand.slice().sort((a, b) => cardStrength(a, G.manilhaRank) - cardStrength(b, G.manilhaRank));
-    const tableCards = G.table.map((c, i) => (c ? { card: c, strength: cardStrength(c, G.manilhaRank), team: G.players[i].team } : null)).filter(Boolean);
+    const tableCards = G.table.map((entry, i) => (entry ? { strength: tableEntryStrength(entry, G.manilhaRank), team: G.players[i].team } : null)).filter(Boolean);
     const bestOnTable = tableCards.length ? Math.max(...tableCards.map((t) => t.strength)) : -1;
     const teamAlreadyWinning = tableCards.some((t) => t.team === player.team && t.strength === bestOnTable);
 
@@ -291,7 +305,7 @@ function aiEstimateStrength(G, team) {
 
 function aiConsiderCall(G, playerIndex) {
     const player = G.players[playerIndex];
-    if (G.stake >= 12) return false;
+    if (!canCall(G, player.team)) return false;
     const strength = aiEstimateStrength(G, player.team);
     const threshold = 16 + Math.random() * 9;
     return strength > threshold && Math.random() < 0.55;
@@ -315,7 +329,8 @@ function aiMaoOnzeDecision(G, team) {
 export {
     RANK_ORDER, SUITS, SUIT_INFO, SINAIS, CALL_NAME,
     createGame, startHand, playCard, advanceTurnAfterPlay, resolveTrick,
-    endHand, runFromHand, makeCall, acceptCall, runFromCall, raiseCall,
+    endHand, runFromHand, makeCall, acceptCall, runFromCall, raiseCall, canCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
     cardStrength, cardLabel, handStrength, teamName, nextLevel, teamHandStrength,
+    tableEntryStrength,
 };

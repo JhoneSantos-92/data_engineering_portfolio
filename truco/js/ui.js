@@ -3,10 +3,11 @@ import {
     createGame, startHand, playCard, advanceTurnAfterPlay,
     runFromHand, makeCall, acceptCall, runFromCall, raiseCall,
     aiPickCard, aiConsiderCall, aiRespondToCall, aiMaoOnzeDecision,
-    cardLabel, teamName, nextLevel,
+    cardLabel, teamName, nextLevel, canCall,
 } from './truco.js';
 
 const BOT_DELAY = 850;
+const TURN_SECONDS = 10;
 
 const el = {
     scoreA: document.getElementById('score-a'),
@@ -24,6 +25,7 @@ const el = {
     slotBottom: document.getElementById('slot-bottom'),
     log: document.getElementById('log-panel'),
     actionBar: document.getElementById('action-bar'),
+    turnTimer: document.getElementById('turn-timer'),
     signalRow: document.getElementById('signal-row'),
     newGameBtn: document.getElementById('new-game-btn'),
     infoBtn: document.getElementById('info-btn'),
@@ -37,6 +39,33 @@ const el = {
 
 let G = createGame(logMessage);
 let scheduled = false;
+let playHiddenMode = false;
+let timerId = null;
+
+function clearHumanTimer() {
+    if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+    }
+    el.turnTimer.hidden = true;
+}
+
+function startHumanTimer(onExpire) {
+    clearHumanTimer();
+    let remaining = TURN_SECONDS;
+    el.turnTimer.hidden = false;
+    el.turnTimer.textContent = `⏱ ${remaining}s`;
+    el.turnTimer.style.setProperty('--pct', '100%');
+    timerId = setInterval(() => {
+        remaining -= 1;
+        el.turnTimer.textContent = `⏱ ${remaining}s`;
+        el.turnTimer.style.setProperty('--pct', `${(remaining / TURN_SECONDS) * 100}%`);
+        if (remaining <= 0) {
+            clearHumanTimer();
+            onExpire();
+        }
+    }, 1000);
+}
 
 function logMessage(msg) {
     G.log_messages = G.log_messages || [];
@@ -100,24 +129,29 @@ function renderSeat(container, player, isHuman) {
             c.classList.add('clickable');
             const canPlay = G.phase === 'playing' && G.turnIndex === 0 && !G.matchOver;
             if (!canPlay) c.classList.add('disabled');
-            else c.addEventListener('click', () => onHumanPlay(card));
+            else {
+                if (playHiddenMode) c.classList.add('card-armed');
+                c.addEventListener('click', () => onHumanPlay(card));
+            }
             handDiv.appendChild(c);
         });
-    } else if (G.maoDeFerro) {
+    } else if (G.maoDeFerro || (G.maoDeOnze && G.maoOnzeTeam === 'A' && player.team === 'A')) {
         player.hand.forEach((card) => handDiv.appendChild(cardEl(card)));
     } else {
         player.hand.forEach(() => handDiv.appendChild(cardBackEl()));
     }
 }
 
-function renderSlot(container, card) {
+function renderSlot(container, entry) {
     container.innerHTML = '';
-    if (card) container.appendChild(cardEl(card));
+    if (!entry) return;
+    container.appendChild(entry.hidden ? cardBackEl() : cardEl(entry.card));
 }
 
 function renderActionBar() {
     el.actionBar.innerHTML = '';
     el.signalRow.style.display = 'none';
+    clearHumanTimer();
 
     if (G.matchOver) {
         showEndModal();
@@ -134,7 +168,7 @@ function renderActionBar() {
     }
 
     if (G.phase === 'mao11-human') {
-        el.actionBar.innerHTML = '<p class="prompt">Mão de Onze! Sua dupla está com 11 pontos. Jogar vale 3, correr entrega 1 ponto.</p>';
+        el.actionBar.innerHTML = '<p class="prompt">Mão de Onze! Sua dupla está com 11 pontos. Vocês veem as cartas uma da outra (mão aberta). Jogar vale 3, correr entrega 1 ponto.</p>';
         addButton('Jogar (vale 3)', () => {
             G.phase = 'playing';
             tick();
@@ -143,6 +177,10 @@ function renderActionBar() {
             runFromHand(G, 'A', 1);
             tick();
         }, true);
+        startHumanTimer(() => {
+            runFromHand(G, 'A', 1);
+            tick();
+        });
         return;
     }
 
@@ -157,6 +195,8 @@ function renderActionBar() {
         addButton('Aceitar', () => { acceptCall(G); tick(); });
         addButton('Correr', () => { runFromCall(G); tick(); }, true);
         if (call.level < 12) addButton(`Aumentar p/ ${CALL_NAME[nextLevel(call.level)]}`, () => { raiseCall(G); tick(); });
+        el.signalRow.style.display = 'flex';
+        startHumanTimer(() => { runFromCall(G); tick(); });
         return;
     }
 
@@ -166,11 +206,29 @@ function renderActionBar() {
     }
 
     if (G.phase === 'playing' && G.turnIndex === 0) {
-        el.actionBar.innerHTML = '<p class="prompt">Sua vez: jogue uma carta ou peça um aumento.</p>';
-        if (G.stake < 12 && !G.maoDeOnze && !G.maoDeFerro) {
+        playHiddenMode = false;
+        const canHide = G.roundResults.length > 0;
+        el.actionBar.innerHTML = canHide
+            ? '<p class="prompt">Sua vez: jogue uma carta, peça um aumento ou jogue uma carta virada.</p>'
+            : '<p class="prompt">Sua vez: jogue uma carta ou peça um aumento.</p>';
+        if (canCall(G, 'A')) {
             addButton(`Pedir ${CALL_NAME[nextLevel(G.stake)]}`, () => { makeCall(G, 'A'); tick(); });
         }
+        if (canHide) {
+            const hideBtn = addButton('🂠 Jogar virada', () => {
+                playHiddenMode = !playHiddenMode;
+                hideBtn.classList.toggle('btn-active', playHiddenMode);
+                renderSeat(el.seatBottom, G.players[0], true);
+            }, true);
+            hideBtn.title = 'Depois da 1ª rodada você pode "queimar" uma carta virada, sem revelar seu valor.';
+        }
         el.signalRow.style.display = 'flex';
+        startHumanTimer(() => {
+            const card = aiPickCard(G, 0);
+            playCard(G, 0, card, false);
+            advanceTurnAfterPlay(G);
+            tick();
+        });
         return;
     }
 
@@ -183,11 +241,14 @@ function addButton(label, onClick, secondary) {
     btn.textContent = label;
     btn.addEventListener('click', onClick);
     el.actionBar.appendChild(btn);
+    return btn;
 }
 
 function onHumanPlay(card) {
     if (G.phase !== 'playing' || G.turnIndex !== 0) return;
-    playCard(G, 0, card);
+    const hidden = playHiddenMode && G.roundResults.length > 0;
+    playHiddenMode = false;
+    playCard(G, 0, card, hidden);
     advanceTurnAfterPlay(G);
     tick();
 }
@@ -245,8 +306,7 @@ function tick() {
         setTimeout(() => {
             scheduled = false;
             const idx = G.turnIndex;
-            const noCallYet = !G.maoDeOnze && !G.maoDeFerro && G.stake < 12;
-            if (noCallYet && aiConsiderCall(G, idx)) {
+            if (aiConsiderCall(G, idx)) {
                 makeCall(G, G.players[idx].team);
             } else {
                 const card = aiPickCard(G, idx);

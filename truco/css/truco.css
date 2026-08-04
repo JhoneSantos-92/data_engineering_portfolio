@@ -86,6 +86,10 @@ body {
     color: var(--danger);
 }
 .btn-secondary:hover { background: rgba(217, 97, 79, 0.12); }
+.btn-secondary.btn-active {
+    background: var(--danger);
+    color: #2a0f0a;
+}
 
 .truco-main {
     display: grid;
@@ -209,6 +213,9 @@ body {
 .card.clickable { cursor: pointer; }
 .card.clickable:hover { transform: translateY(-8px); box-shadow: 0 10px 16px rgba(0,0,0,0.4); }
 .card.disabled { opacity: 0.55; pointer-events: none; }
+.card.card-armed {
+    box-shadow: 0 0 0 2px var(--danger), 0 3px 6px rgba(0,0,0,0.35);
+}
 
 .table-center {
     position: absolute;
@@ -262,6 +269,25 @@ body {
 
 .action-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .prompt { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+
+.turn-timer {
+    --pct: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gold-soft);
+    background:
+        radial-gradient(closest-side, var(--panel-bg) 72%, transparent 73% 100%),
+        conic-gradient(var(--gold) var(--pct), rgba(255,255,255,0.12) 0);
+    transition: background 0.9s linear;
+}
+.turn-timer[hidden] { display: none; }
 
 .signal-row { display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .signal-label { font-size: 0.75rem; color: var(--text-muted); margin-right: 4px; }
