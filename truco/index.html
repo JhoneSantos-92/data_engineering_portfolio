@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truco Online | Jhone Estefano dos Santos</title>
+    <meta name="description" content="Truco Paulista completo em dupla contra a máquina: manilhas, truco/seis/nove/doze, mão de onze e sinais tradicionais. Projeto pessoal em HTML, CSS e JavaScript puro.">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <meta name="theme-color" content="#0b3d24">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/truco.css">
+</head>
+<body>
+    <div id="call-banner" class="call-banner" aria-live="polite"></div>
+    <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+
+    <header class="truco-header">
+        <a href="../index.html" class="logo"><span class="logo-dot">&gt;</span>_jhone.santos</a>
+        <h1>Truco Paulista</h1>
+        <div class="header-actions">
+            <button id="history-btn" class="btn btn-ghost" aria-label="Histórico da mesa">📜 Histórico</button>
+            <button id="info-btn" class="btn btn-ghost" aria-label="Sinais do truco">Sinais &amp; Regras</button>
+            <button id="new-game-btn" class="btn btn-ghost">Novo Jogo</button>
+        </div>
+    </header>
+
+    <main class="truco-main">
+        <section class="scoreboard">
+            <div class="score-item">
+                <span class="score-label">Nós</span>
+                <span class="score-value" id="score-a">0</span>
+            </div>
+            <div class="score-item hand-info">
+                <span>Mão nº <span id="hand-number">0</span></span>
+            </div>
+            <div class="score-item">
+                <span class="score-label">Eles</span>
+                <span class="score-value" id="score-b">0</span>
+            </div>
+        </section>
+
+        <div class="table-wrap">
+            <div class="felt-table">
+                <div id="deal-overlay" class="deal-overlay"></div>
+                <div class="seat seat-top" id="seat-top">
+                    <div class="seat-header">
+                        <div class="avatar avatar-a">D<div class="signal-badge" id="badge-duda"></div></div>
+                        <span class="seat-name">Duda</span>
+                    </div>
+                    <div class="seat-hand"></div>
+                </div>
+                <div class="seat seat-left" id="seat-left">
+                    <div class="seat-header">
+                        <div class="avatar avatar-b">N</div>
+                        <span class="seat-name">Naná</span>
+                    </div>
+                    <div class="seat-hand"></div>
+                </div>
+                <div class="seat seat-right" id="seat-right">
+                    <div class="seat-header">
+                        <div class="avatar avatar-b">Z</div>
+                        <span class="seat-name">Zeca</span>
+                    </div>
+                    <div class="seat-hand"></div>
+                    <div class="seat-actions">
+                        <button id="fixed-truco-btn" class="btn fixed-btn btn-green" disabled>TRUCO!</button>
+                        <button id="fixed-correr-btn" class="btn fixed-btn btn-red-solid" disabled>Correr</button>
+                    </div>
+                </div>
+
+                <div class="table-center">
+                    <div class="vira-box">
+                        <span class="vira-tag">Vira</span>
+                        <div id="vira-card" class="vira-card"></div>
+                        <span id="manilha-label" class="manilha-label"></span>
+                    </div>
+                    <div class="play-slots">
+                        <div class="slot slot-top" id="slot-top"></div>
+                        <div class="slot-row">
+                            <div class="slot slot-left" id="slot-left"></div>
+                            <div class="slot slot-right" id="slot-right"></div>
+                        </div>
+                        <div class="slot slot-bottom" id="slot-bottom"></div>
+                    </div>
+                </div>
+
+                <div class="seat seat-bottom" id="seat-bottom">
+                    <div class="seat-header">
+                        <div class="avatar avatar-a">V<div class="signal-badge" id="badge-voce"></div></div>
+                        <span class="seat-name">Você</span>
+                    </div>
+                    <div class="seat-hand"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div id="turn-timer" class="turn-timer" hidden></div>
+            <div id="action-bar" class="action-bar"></div>
+            <div id="signal-row" class="signal-row"></div>
+        </div>
+    </main>
+
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button id="info-close" class="modal-close" aria-label="Fechar">&times;</button>
+            <h2>Sinais &amp; Regras do Truco</h2>
+
+            <h3>Pontuação</h3>
+            <p>Vence a partida quem fizer 12 pontos primeiro. Cada mão vale 1 ponto, e pode ser aumentada gritando
+                <strong>Truco</strong> (3), <strong>Seis</strong> (6), <strong>Nove</strong> (9) e <strong>Doze</strong> (12).
+                Quem recebe o pedido pode aceitar, aumentar ou correr — quem corre entrega apenas o valor
+                que a mão valia antes daquele pedido.</p>
+
+            <h3>Manilhas</h3>
+            <p>A carta virada ("vira") define a manilha: é a carta seguinte na sequência
+                4-5-6-7-Q-J-K-A-2-3. As quatro manilhas são as cartas mais fortes do jogo, nesta ordem de força:
+                <strong>Ouros &lt; Espadas &lt; Copas &lt; Paus (Zap)</strong>.</p>
+
+            <h3>Mão de Onze</h3>
+            <p>Quando uma dupla chega a 11 pontos, a mão seguinte já nasce valendo 3 pontos e ninguém pode pedir
+                aumento. Nessa mão, os dois parceiros jogam de <strong>mão aberta</strong>: veem as cartas um do
+                outro antes de decidir entre jogar (vale 3) ou correr (perde apenas 1 ponto).
+                Se as duas duplas estiverem em 11, é <strong>mão de ferro</strong>: ela é jogada como uma mão
+                comum, no escuro, com sinais e aumentos normalmente — ninguém vê a carta de ninguém. A única
+                diferença é que, como as duas duplas já estão em 11, quem vencer essa mão vence a partida.</p>
+
+            <h3>Carta virada</h3>
+            <p>A partir da 2ª rodada (nunca na 1ª), você pode "queimar" uma carta virada em vez de jogá-la
+                normalmente: ela vale automaticamente a rodada mais fraca possível, mas o adversário nunca
+                descobre qual carta era. É uma jogada de blefe, usada pra não entregar informação sobre sua mão.</p>
+
+            <h3>Tempo de decisão</h3>
+            <p>Você tem 10 segundos por decisão (jogar carta, aceitar/correr/aumentar, ou mão de onze). Se o
+                tempo acabar, o jogo decide por você da forma mais segura: joga a carta mais fraca disponível
+                ou corre.</p>
+
+            <h3>Troca de sinais no início da mão</h3>
+            <p>Antes da 1ª carta de cada mão, a Duda sinaliza pra você a manilha que ela realmente tem na mão
+                (ou o sinal de "não tenho nada") e depois é sua vez de sinalizar de volta — ninguém joga carta
+                até essa troca terminar. A dupla adversária troca sinais do mesmo jeito, mas fica fora da sua
+                vista. Na mão de onze, só a dupla que está com 11 pontos dispensa o sinal (já vê a mão aberta
+                da parceira); a outra dupla ainda troca normalmente, depois da decisão de jogar ou correr. Na
+                mão de ferro (11 a 11) a troca acontece normalmente para as duas duplas, exatamente como numa
+                mão comum — nenhuma carta é revelada.</p>
+
+            <h3>Sinais tradicionais</h3>
+            <p class="muted">Usados de olho no parceiro, sem o adversário perceber. Variam muito de região pra
+                região e de dupla pra dupla — combine antes de valer!</p>
+            <ul class="sinais-list">
+                <li><strong>😉 Piscar o olho</strong> — manilha de Paus (o Zap, carta mais forte do baralho).</li>
+                <li><strong>🤨 Levantar uma sobrancelha</strong> — manilha de Copas.</li>
+                <li><strong>🙂‍↔️ Balançar o rosto</strong> — manilha de Espadas.</li>
+                <li><strong>😛 Mostrar a língua</strong> — manilha de Ouros.</li>
+                <li><strong>😮‍💨 Suspirar</strong> — "não tenho nada".</li>
+                <li><strong>💪 Levantar os dois ombros</strong> — par de 3 (gesto tradicional, sem botão neste jogo).</li>
+                <li><strong>🤞 Mostrar o dedo mindinho</strong> — tem um Ás (gesto tradicional, sem botão neste jogo).</li>
+                <li><strong>🧔 Coçar o queixo</strong> — tem um Rei (gesto tradicional, sem botão neste jogo).</li>
+                <li><strong>👂 Mão na orelha</strong> — tem uma Dama (gesto tradicional, sem botão neste jogo).</li>
+            </ul>
+            <p class="muted">Neste jogo, os 5 primeiros sinais aparecem como botões — inclusive quando o adversário
+                pede truco — para você avisar sua Duda (parceira) sobre a força da sua mão e mudar um pouco a
+                coragem dela para aceitar, correr ou pedir aumento.</p>
+        </div>
+    </div>
+
+    <div id="history-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button id="history-close" class="modal-close" aria-label="Fechar">&times;</button>
+            <h2>Histórico da Mesa</h2>
+            <div id="log-panel" class="log-panel"></div>
+        </div>
+    </div>
+
+    <div id="end-modal" class="modal-overlay">
+        <div class="modal-box modal-box-center">
+            <h2 id="end-title">Fim de jogo</h2>
+            <p id="end-text"></p>
+            <button id="end-play-again" class="btn btn-primary">Jogar novamente</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/ui.js"></script>
+</body>
+</html>
