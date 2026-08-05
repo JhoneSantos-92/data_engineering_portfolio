@@ -200,6 +200,7 @@ function tableEntryStrength(entry, manilhaRank) {
 }
 
 function playCard(G, playerIndex, card, hidden = false) {
+    if (!card) return;
     const player = G.players[playerIndex];
     player.hand = player.hand.filter((c) => !(c.rank === card.rank && c.suit === card.suit));
     G.table[playerIndex] = { card, hidden };
@@ -327,6 +328,7 @@ function raiseCall(G) {
 
 function aiPickCard(G, playerIndex) {
     const player = G.players[playerIndex];
+    if (player.hand.length === 0) return null;
     const hand = player.hand.slice().sort((a, b) => cardStrength(a, G.manilhaRank) - cardStrength(b, G.manilhaRank));
     const tableCards = G.table.map((entry, i) => (entry ? { strength: tableEntryStrength(entry, G.manilhaRank), team: G.players[i].team } : null)).filter(Boolean);
     const bestOnTable = tableCards.length ? Math.max(...tableCards.map((t) => t.strength)) : -1;

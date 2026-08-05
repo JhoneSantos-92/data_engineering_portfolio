@@ -389,7 +389,8 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.95); }
 }
 
-.signal-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.signal-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; transition: opacity 0.2s ease; }
+.signal-row.dealing-lock { opacity: 0.35; pointer-events: none; }
 .signal-label { font-size: 0.75rem; color: var(--text-muted); margin-right: 4px; }
 .signal-btn {
     width: 38px;
@@ -498,6 +499,131 @@ body {
     .call-banner { top: 64px; font-size: 0.9rem; padding: 10px 18px; white-space: normal; text-align: center; }
 }
 
+/* --- Manilha highlight --- */
+.card.card-manilha {
+    box-shadow: 0 0 0 2px var(--gold), 0 0 14px rgba(232, 194, 95, 0.65), 0 3px 6px rgba(0,0,0,0.35);
+    position: relative;
+}
+.card.card-manilha::after {
+    content: '★';
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #22190a;
+    font-size: 0.62rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* --- Turn indicator --- */
+.seat.turn-active .seat-name::before {
+    content: '● ';
+    color: var(--gold);
+    animation: dotPulse 1s ease-in-out infinite;
+}
+@keyframes dotPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+/* --- Vira flip --- */
+.vira-card { perspective: 400px; }
+.vira-card .card.vira-flip { animation: viraFlip 0.6s cubic-bezier(.4,.2,.2,1); }
+@keyframes viraFlip {
+    0% { transform: rotateY(180deg) scale(0.8); opacity: 0; }
+    60% { transform: rotateY(-15deg) scale(1.05); opacity: 1; }
+    100% { transform: rotateY(0) scale(1); opacity: 1; }
+}
+
+/* --- Played card slide-in --- */
+.card.slide-top { animation: slideFromTop 0.32s ease-out; }
+.card.slide-bottom { animation: slideFromBottom 0.32s ease-out; }
+.card.slide-left { animation: slideFromLeft 0.32s ease-out; }
+.card.slide-right { animation: slideFromRight 0.32s ease-out; }
+@keyframes slideFromTop { from { transform: translateY(-46px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideFromBottom { from { transform: translateY(46px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideFromLeft { from { transform: translateX(-46px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideFromRight { from { transform: translateX(46px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* --- Card sweep to winner at trick end --- */
+.card.sweeping {
+    animation: sweepAway 0.45s ease forwards;
+    z-index: 5;
+}
+@keyframes sweepAway {
+    to { transform: translate(var(--sx, 0), var(--sy, 0)) scale(0.35); opacity: 0; }
+}
+
+/* --- Signal per-type micro animation --- */
+.signal-icon-glyph { display: inline-block; }
+.signal-icon-glyph.anim-paus { animation: sinalWink 0.6s ease-in-out 0.35s 2; }
+.signal-icon-glyph.anim-copas { animation: sinalBrow 0.7s ease-in-out 0.35s 2; }
+.signal-icon-glyph.anim-espadas { animation: sinalShake 0.6s ease-in-out 0.35s 2; }
+.signal-icon-glyph.anim-ouros { animation: sinalTongue 0.7s ease-in-out 0.35s 2; }
+.signal-icon-glyph.anim-nada { animation: sinalSigh 1.2s ease-in-out 0.35s 1; }
+@keyframes sinalWink { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.15); } }
+@keyframes sinalBrow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes sinalShake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+@keyframes sinalTongue { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@keyframes sinalSigh { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-6px); opacity: 0.7; } }
+
+/* --- Score change flash --- */
+.score-value.flash { animation: scoreFlash 0.6s ease; }
+@keyframes scoreFlash {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.35); text-shadow: 0 0 14px var(--gold); }
+    100% { transform: scale(1); text-shadow: none; }
+}
+
+/* --- Felt table pulse on truco call --- */
+.felt-table.call-pulse { animation: feltPulse 0.9s ease; }
+@keyframes feltPulse {
+    0% { box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.45), 0 0 0 0 rgba(232,194,95,0.6); }
+    40% { box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.45), 0 0 0 22px rgba(232,194,95,0); }
+    100% { box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.45), 0 0 0 0 rgba(232,194,95,0); }
+}
+
+/* --- Screen shake on losing an important hand --- */
+.felt-table.shake { animation: shake 0.5s ease; }
+@keyframes shake {
+    10%, 90% { transform: translateX(-4px); }
+    20%, 80% { transform: translateX(6px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+}
+
+/* --- Dealing animation overlay --- */
+.deal-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 8; }
+.deal-card {
+    position: absolute;
+    width: 46px;
+    height: 66px;
+    transform: translate(-50%, -50%);
+    transition: left 0.55s cubic-bezier(.2,.7,.3,1), top 0.55s cubic-bezier(.2,.7,.3,1), opacity 0.25s ease 0.4s;
+}
+
+/* --- Confetti + win glow --- */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 70; overflow: hidden; }
+.confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 8px;
+    height: 14px;
+    opacity: 0.9;
+    animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+}
+.modal-box.win-glow { animation: winGlow 1.6s ease-in-out infinite; }
+@keyframes winGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,194,95,0.5); }
+    50% { box-shadow: 0 0 40px 8px rgba(232,194,95,0.65); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .btn, .card, .signal-btn, .seat, .slot, .avatar { transition: none; }
     .call-banner.show { animation: none; opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
@@ -506,4 +632,16 @@ body {
     .card.card-winner { animation: none; transform: none; }
     .seat.turn-active .avatar { animation: none; }
     .signal-badge.show { animation: none; opacity: 1; transform: scale(1) rotate(0); }
+    .seat.turn-active .seat-name::before { animation: none; opacity: 1; }
+    .vira-card .card.vira-flip { animation: none; }
+    .card.slide-top, .card.slide-bottom, .card.slide-left, .card.slide-right { animation: none; }
+    .card.sweeping { animation: none; opacity: 0; }
+    .signal-icon-glyph.anim-paus, .signal-icon-glyph.anim-copas, .signal-icon-glyph.anim-espadas,
+    .signal-icon-glyph.anim-ouros, .signal-icon-glyph.anim-nada { animation: none; }
+    .score-value.flash { animation: none; }
+    .felt-table.call-pulse { animation: none; }
+    .felt-table.shake { animation: none; }
+    .deal-card { transition: none; }
+    .modal-box.win-glow { animation: none; }
+    .confetti-piece { animation: none; opacity: 0; }
 }

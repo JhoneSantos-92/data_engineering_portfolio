@@ -43,12 +43,24 @@ const el = {
     endTitle: document.getElementById('end-title'),
     endText: document.getElementById('end-text'),
     endPlayAgain: document.getElementById('end-play-again'),
+    feltTable: document.querySelector('.felt-table'),
+    dealOverlay: document.getElementById('deal-overlay'),
+    confettiLayer: document.getElementById('confetti-layer'),
 };
+
+const SEAT_BY_INDEX = { 0: 'seatBottom', 1: 'seatRight', 2: 'seatTop', 3: 'seatLeft' };
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let G = createGame(logMessage);
 let scheduled = false;
 let playHiddenMode = false;
 let timerId = null;
+let dealing = false;
+let viraFlipPending = false;
+let lastRenderedVira = null;
+let lastTableKeys = [null, null, null, null];
+let prevScoreA = 0;
+let prevScoreB = 0;
 
 function clearHumanTimer() {
     if (timerId) {
@@ -90,8 +102,8 @@ function showBanner(text, variant) {
 
 const badgeTimeouts = {};
 
-function showAvatarSignal(key, badgeEl, icon) {
-    badgeEl.textContent = icon;
+function showAvatarSignal(key, badgeEl, icon, signalId) {
+    badgeEl.innerHTML = `<span class="signal-icon-glyph anim-${signalId || 'default'}">${icon}</span>`;
     badgeEl.classList.remove('show');
     void badgeEl.offsetWidth;
     badgeEl.classList.add('show');
@@ -99,6 +111,112 @@ function showAvatarSignal(key, badgeEl, icon) {
     badgeTimeouts[key] = setTimeout(() => {
         badgeEl.classList.remove('show');
     }, 5000);
+}
+
+function pulseFeltTable() {
+    if (prefersReducedMotion || !el.feltTable) return;
+    el.feltTable.classList.remove('call-pulse');
+    void el.feltTable.offsetWidth;
+    el.feltTable.classList.add('call-pulse');
+}
+
+function shakeFeltTable() {
+    if (prefersReducedMotion || !el.feltTable) return;
+    el.feltTable.classList.remove('shake');
+    void el.feltTable.offsetWidth;
+    el.feltTable.classList.add('shake');
+}
+
+function triggerCardSweep(winnerIndex) {
+    if (prefersReducedMotion || winnerIndex === null || winnerIndex === undefined) return;
+    let sx = 0;
+    let sy = 0;
+    if (winnerIndex === 2) sy = -220;
+    else if (winnerIndex === 0) sy = 220;
+    else if (winnerIndex === 3) sx = -220;
+    else if (winnerIndex === 1) sx = 220;
+    [el.slotTop, el.slotLeft, el.slotRight, el.slotBottom].forEach((slot) => {
+        const card = slot.querySelector('.card');
+        if (!card) return;
+        card.style.setProperty('--sx', `${sx}px`);
+        card.style.setProperty('--sy', `${sy}px`);
+        card.classList.add('sweeping');
+    });
+}
+
+function runDealAnimation(onDone) {
+    if (prefersReducedMotion) {
+        onDone();
+        return;
+    }
+    const overlay = el.dealOverlay;
+    overlay.innerHTML = '';
+    const feltRect = el.feltTable.getBoundingClientRect();
+    const deckRect = document.querySelector('.vira-box').getBoundingClientRect();
+    const deckX = deckRect.left + deckRect.width / 2 - feltRect.left;
+    const deckY = deckRect.top + deckRect.height / 2 - feltRect.top;
+
+    const order = [];
+    for (let round = 0; round < 3; round++) {
+        for (let p = 0; p < 4; p++) order.push(p);
+    }
+    order.forEach((playerIdx, i) => {
+        const seatEl = el[SEAT_BY_INDEX[playerIdx]];
+        const seatRect = seatEl.getBoundingClientRect();
+        const targetX = seatRect.left + seatRect.width / 2 - feltRect.left;
+        const targetY = seatRect.top + seatRect.height / 2 - feltRect.top;
+        const card = document.createElement('div');
+        card.className = 'card card-back deal-card';
+        card.style.left = `${deckX}px`;
+        card.style.top = `${deckY}px`;
+        card.style.opacity = '0';
+        overlay.appendChild(card);
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.left = `${targetX}px`;
+            card.style.top = `${targetY}px`;
+        }, 30 + i * 60);
+    });
+
+    const totalTime = 30 + order.length * 60 + 600;
+    setTimeout(() => {
+        overlay.innerHTML = '';
+        onDone();
+    }, totalTime);
+}
+
+function beginHandWithDealAnimation() {
+    startHand(G);
+    if (prefersReducedMotion) {
+        viraFlipPending = false;
+        tick();
+        return;
+    }
+    dealing = true;
+    render();
+    runDealAnimation(() => {
+        dealing = false;
+        viraFlipPending = true;
+        tick();
+    });
+}
+
+function spawnConfetti() {
+    if (prefersReducedMotion) return;
+    const colors = ['#e8c25f', '#f2d98a', '#4fae6b', '#7fd89a', '#d9614f'];
+    el.confettiLayer.innerHTML = '';
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = `${2 + Math.random() * 1.5}s`;
+        piece.style.animationDelay = `${Math.random() * 0.4}s`;
+        el.confettiLayer.appendChild(piece);
+    }
+    setTimeout(() => {
+        el.confettiLayer.innerHTML = '';
+    }, 4200);
 }
 
 function logMessage(msg) {
@@ -116,7 +234,9 @@ function renderLog() {
 function cardEl(card, opts = {}) {
     const info = SUIT_INFO[card.suit];
     const div = document.createElement('div');
-    div.className = `card card-${info.color}` + (opts.small ? ' card-small' : '');
+    let cls = `card card-${info.color}` + (opts.small ? ' card-small' : '');
+    if (G.manilhaRank && card.rank === G.manilhaRank) cls += ' card-manilha';
+    div.className = cls;
     div.innerHTML = `<span class="card-rank">${card.rank}</span><span class="card-suit">${info.symbol}</span>`;
     return div;
 }
@@ -128,12 +248,40 @@ function cardBackEl() {
 }
 
 function render() {
+    if (dealing) {
+        renderDealingShell();
+        return;
+    }
+    el.signalRow.classList.remove('dealing-lock');
+
+    if (G.score.A !== prevScoreA) {
+        el.scoreA.classList.remove('flash');
+        void el.scoreA.offsetWidth;
+        el.scoreA.classList.add('flash');
+        prevScoreA = G.score.A;
+    }
+    if (G.score.B !== prevScoreB) {
+        el.scoreB.classList.remove('flash');
+        void el.scoreB.offsetWidth;
+        el.scoreB.classList.add('flash');
+        prevScoreB = G.score.B;
+    }
     el.scoreA.textContent = G.score.A;
     el.scoreB.textContent = G.score.B;
     el.handNumber.textContent = G.handNumber;
 
-    el.vira.innerHTML = '';
-    if (G.vira) el.vira.appendChild(cardEl(G.vira));
+    if (G.vira !== lastRenderedVira) {
+        el.vira.innerHTML = '';
+        if (G.vira) {
+            const viraDiv = cardEl(G.vira);
+            if (viraFlipPending) {
+                viraDiv.classList.add('vira-flip');
+                viraFlipPending = false;
+            }
+            el.vira.appendChild(viraDiv);
+        }
+        lastRenderedVira = G.vira;
+    }
     el.manilha.textContent = G.manilhaRank ? `Manilha: ${G.manilhaRank}` : '';
 
     renderSeat(el.seatTop, G.players[2], false);
@@ -151,6 +299,27 @@ function render() {
     renderSlot(el.slotBottom, G.table[0], 0);
 
     renderActionBar();
+}
+
+function renderDealingShell() {
+    clearHumanTimer();
+    el.scoreA.textContent = G.score.A;
+    el.scoreB.textContent = G.score.B;
+    el.handNumber.textContent = G.handNumber;
+    el.vira.innerHTML = '';
+    lastRenderedVira = null;
+    el.manilha.textContent = '';
+    [el.seatTop, el.seatLeft, el.seatRight, el.seatBottom].forEach((seatEl) => {
+        seatEl.classList.remove('turn-active');
+        seatEl.querySelector('.seat-hand').innerHTML = '';
+    });
+    [el.slotTop, el.slotLeft, el.slotRight, el.slotBottom].forEach((slotEl) => {
+        slotEl.innerHTML = '';
+        slotEl.classList.remove('slot-winner');
+    });
+    lastTableKeys = [null, null, null, null];
+    el.actionBar.innerHTML = '<p class="prompt">Distribuindo as cartas...</p>';
+    el.signalRow.classList.add('dealing-lock');
 }
 
 function renderSeat(container, player, isHuman) {
@@ -176,13 +345,20 @@ function renderSeat(container, player, isHuman) {
     }
 }
 
+const SLOT_DIRECTION = { 0: 'slide-bottom', 1: 'slide-right', 2: 'slide-top', 3: 'slide-left' };
+
 function renderSlot(container, entry, playerIndex) {
+    const key = entry ? (entry.hidden ? 'hidden' : `${entry.card.rank}${entry.card.suit}`) : null;
+    const isNew = key !== lastTableKeys[playerIndex];
+    lastTableKeys[playerIndex] = key;
+
     container.innerHTML = '';
     const isWinner = G.phase === 'trick-over' && G.trickWinnerIndex === playerIndex;
     container.classList.toggle('slot-winner', isWinner);
     if (!entry) return;
     const cardDiv = entry.hidden ? cardBackEl() : cardEl(entry.card);
     if (isWinner) cardDiv.classList.add('card-winner');
+    if (isNew && !prefersReducedMotion) cardDiv.classList.add(SLOT_DIRECTION[playerIndex]);
     container.appendChild(cardDiv);
 }
 
@@ -227,11 +403,11 @@ function renderActionBar() {
         const s = G.dudaSignal;
         el.actionBar.innerHTML = `<p class="prompt">Duda sinalizou: ${s.icon} ${s.desc} Agora é sua vez de sinalizar para ela antes da 1ª carta.</p>`;
         showBanner(`Duda sinalizou: ${s.icon}`);
-        showAvatarSignal('duda', el.badgeDuda, s.icon);
+        showAvatarSignal('duda', el.badgeDuda, s.icon, s.id);
         startHumanTimer(() => {
             const nada = SINAIS.find((x) => x.id === 'nada');
             sendPartnerSignal(G, nada.boost);
-            showAvatarSignal('voce', el.badgeVoce, nada.icon);
+            showAvatarSignal('voce', el.badgeVoce, nada.icon, nada.id);
             G.log('Você não sinalizou a tempo — sinal de "não tenho nada" enviado automaticamente.');
             tick();
         });
@@ -251,6 +427,7 @@ function renderActionBar() {
                 G.lastHandWinner === 'A' ? '🎉 Vitória da mão!' : '😕 Vocês perderam a mão',
                 G.lastHandWinner === 'A' ? 'win' : 'lose'
             );
+            if (G.lastHandWinner === 'B' && G.stake >= 3) shakeFeltTable();
         }
         return;
     }
@@ -270,6 +447,7 @@ function renderActionBar() {
             addButton(`Aumentar p/ ${CALL_NAME[raisedLevel]}`, () => {
                 raiseCall(G);
                 showBanner(`Você pediu ${CALL_NAME[raisedLevel]}!`);
+                pulseFeltTable();
                 tick();
             });
         }
@@ -295,6 +473,7 @@ function renderActionBar() {
             addButton(`Pedir ${CALL_NAME[callLevel]}`, () => {
                 makeCall(G, 'A', 'Você');
                 showBanner(`Você pediu ${CALL_NAME[callLevel]}!`);
+                pulseFeltTable();
                 tick();
             });
         }
@@ -308,6 +487,7 @@ function renderActionBar() {
         }
         startHumanTimer(() => {
             const card = aiPickCard(G, 0);
+            if (!card) { tick(); return; }
             playCard(G, 0, card, false);
             advanceTurnAfterPlay(G);
             tick();
@@ -350,6 +530,9 @@ function showEndModal() {
     el.endTitle.textContent = G.winner === 'A' ? '🏆 Vitória!' : '💔 Derrota';
     el.endText.textContent = `Placar final: Nós ${G.score.A} x ${G.score.B} Eles.`;
     el.endModal.classList.add('open');
+    const modalBox = el.endModal.querySelector('.modal-box');
+    modalBox.classList.toggle('win-glow', G.winner === 'A');
+    if (G.winner === 'A') spawnConfetti();
 }
 
 function tick() {
@@ -358,8 +541,13 @@ function tick() {
     if (scheduled) return;
 
     if (G.phase === 'trick-over') {
-        finishTrick(G);
-        tick();
+        triggerCardSweep(G.trickWinnerIndex);
+        scheduled = true;
+        setTimeout(() => {
+            scheduled = false;
+            finishTrick(G);
+            tick();
+        }, prefersReducedMotion ? 0 : 480);
         return;
     }
 
@@ -367,8 +555,7 @@ function tick() {
         scheduled = true;
         setTimeout(() => {
             scheduled = false;
-            startHand(G);
-            tick();
+            beginHandWithDealAnimation();
         }, 1600);
         return;
     }
@@ -401,6 +588,7 @@ function tick() {
                 const newCaller = call.respondingTeam;
                 raiseCall(G);
                 showBanner(`${teamName(newCaller)} pediu ${CALL_NAME[newLevel]}!`);
+                pulseFeltTable();
             }
             tick();
         }, BOT_DELAY);
@@ -414,9 +602,11 @@ function tick() {
             const level = nextLevel(G.stake);
             makeCall(G, player.team, player.name);
             showBanner(`${player.name} pediu ${CALL_NAME[level]}!`);
+            pulseFeltTable();
             tick();
         } else {
             const card = aiPickCard(G, idx);
+            if (!card) { tick(); return; }
             playCard(G, idx, card);
             advanceTurnAfterPlay(G);
             afterCardPlayed();
@@ -433,9 +623,10 @@ function buildSignalRow() {
         btn.title = s.desc;
         btn.innerHTML = `<span class="signal-icon">${s.icon}</span>`;
         btn.addEventListener('click', () => {
+            if (dealing) return;
             const wasSignalPhase = G.phase === 'signal-phase';
             sendPartnerSignal(G, s.boost);
-            showAvatarSignal('voce', el.badgeVoce, s.icon);
+            showAvatarSignal('voce', el.badgeVoce, s.icon, s.id);
             G.log(`Você sinalizou: ${s.desc}`);
             if (wasSignalPhase) tick();
             else render();
@@ -448,8 +639,12 @@ function newGame() {
     G = createGame(logMessage);
     G.log_messages = [];
     scheduled = false;
-    startHand(G);
-    tick();
+    dealing = false;
+    lastRenderedVira = null;
+    lastTableKeys = [null, null, null, null];
+    prevScoreA = 0;
+    prevScoreB = 0;
+    beginHandWithDealAnimation();
 }
 
 el.newGameBtn.addEventListener('click', newGame);
