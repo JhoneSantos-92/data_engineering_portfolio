@@ -92,16 +92,16 @@ body {
 }
 
 .truco-main {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
-    max-width: 1200px;
+    max-width: 760px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .scoreboard {
-    grid-column: 1 / -1;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -155,7 +155,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     padding: 6px 10px;
     border-radius: 12px;
     transition: box-shadow 0.2s ease;
@@ -164,6 +164,56 @@ body {
 .seat.turn-active {
     box-shadow: 0 0 0 2px var(--gold), 0 0 20px rgba(232, 194, 95, 0.35);
     background: rgba(232, 194, 95, 0.08);
+}
+
+.seat.turn-active .avatar {
+    animation: turnPulse 1.6s ease-in-out infinite;
+}
+@keyframes turnPulse {
+    0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.15) inset, 0 0 0 0 rgba(232, 194, 95, 0.55); }
+    50% { box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.15) inset, 0 0 0 7px rgba(232, 194, 95, 0); }
+}
+
+.avatar {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.15) inset;
+    flex-shrink: 0;
+}
+.avatar-a { background: linear-gradient(135deg, #d9b04a, #8a6a20); }
+.avatar-b { background: linear-gradient(135deg, #7a5a86, #322544); }
+
+.signal-badge {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--panel-bg);
+    opacity: 0;
+    transform: scale(0.4) rotate(-15deg);
+    pointer-events: none;
+    box-shadow: 0 0 0 3px var(--gold), 0 6px 16px rgba(0,0,0,0.5);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.signal-badge.show {
+    animation: signalPop 0.4s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes signalPop {
+    0% { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+    60% { opacity: 1; transform: scale(1.15) rotate(6deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
 }
 
 .seat-name {
@@ -271,7 +321,7 @@ body {
 }
 
 .control-panel {
-    grid-column: 1 / 2;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -356,22 +406,6 @@ body {
 }
 .signal-btn:hover { background: rgba(232, 194, 95, 0.15); transform: translateY(-2px); }
 
-.log-wrap {
-    grid-column: 2 / 3;
-    background: #081a11;
-    border: 1px solid var(--panel-border);
-    border-radius: 14px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    max-height: 640px;
-}
-.log-wrap h2 {
-    margin: 0 0 8px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1rem;
-    color: var(--gold-soft);
-}
 .log-panel {
     overflow-y: auto;
     font-family: 'JetBrains Mono', monospace;
@@ -380,7 +414,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    flex: 1;
+    max-height: 55vh;
 }
 .log-line { border-bottom: 1px dashed rgba(255,255,255,0.06); padding-bottom: 4px; }
 .log-line:last-child { color: var(--text-main); }
@@ -444,15 +478,14 @@ body {
 .modal-close:hover { color: var(--text-main); }
 
 @media (max-width: 880px) {
-    .truco-main { grid-template-columns: 1fr; }
-    .control-panel, .log-wrap { grid-column: 1 / -1; }
-    .log-wrap { max-height: 240px; }
     .felt-table { height: 530px; }
 }
 
 @media (max-width: 520px) {
     .truco-header h1 { font-size: 1.05rem; order: 3; width: 100%; text-align: center; }
     .felt-table { height: 460px; border-radius: 24px; }
+    .avatar { width: 38px; height: 38px; font-size: 1rem; }
+    .signal-badge { font-size: 1.2rem; }
     .card { width: 36px; height: 52px; }
     .card-rank { font-size: 0.85rem; }
     .card-suit { font-size: 0.9rem; }
@@ -466,9 +499,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .btn, .card, .signal-btn, .seat, .slot { transition: none; }
+    .btn, .card, .signal-btn, .seat, .slot, .avatar { transition: none; }
     .call-banner.show { animation: none; opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     .call-banner { transform: translateX(-50%) translateY(0) scale(1); }
     .modal-overlay.open .modal-box { animation: none; }
     .card.card-winner { animation: none; transform: none; }
+    .seat.turn-active .avatar { animation: none; }
+    .signal-badge.show { animation: none; opacity: 1; transform: scale(1) rotate(0); }
 }

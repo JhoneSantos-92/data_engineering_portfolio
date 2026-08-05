@@ -30,10 +30,15 @@ const el = {
     turnTimer: document.getElementById('turn-timer'),
     callBanner: document.getElementById('call-banner'),
     signalRow: document.getElementById('signal-row'),
+    badgeDuda: document.getElementById('badge-duda'),
+    badgeVoce: document.getElementById('badge-voce'),
     newGameBtn: document.getElementById('new-game-btn'),
     infoBtn: document.getElementById('info-btn'),
     infoModal: document.getElementById('info-modal'),
     infoClose: document.getElementById('info-close'),
+    historyBtn: document.getElementById('history-btn'),
+    historyModal: document.getElementById('history-modal'),
+    historyClose: document.getElementById('history-close'),
     endModal: document.getElementById('end-modal'),
     endTitle: document.getElementById('end-title'),
     endText: document.getElementById('end-text'),
@@ -81,6 +86,19 @@ function showBanner(text, variant) {
     bannerTimeout = setTimeout(() => {
         el.callBanner.classList.remove('show');
     }, 2400);
+}
+
+const badgeTimeouts = {};
+
+function showAvatarSignal(key, badgeEl, icon) {
+    badgeEl.textContent = icon;
+    badgeEl.classList.remove('show');
+    void badgeEl.offsetWidth;
+    badgeEl.classList.add('show');
+    if (badgeTimeouts[key]) clearTimeout(badgeTimeouts[key]);
+    badgeTimeouts[key] = setTimeout(() => {
+        badgeEl.classList.remove('show');
+    }, 5000);
 }
 
 function logMessage(msg) {
@@ -209,9 +227,11 @@ function renderActionBar() {
         const s = G.dudaSignal;
         el.actionBar.innerHTML = `<p class="prompt">Duda sinalizou: ${s.icon} ${s.desc} Agora é sua vez de sinalizar para ela antes da 1ª carta.</p>`;
         showBanner(`Duda sinalizou: ${s.icon}`);
+        showAvatarSignal('duda', el.badgeDuda, s.icon);
         startHumanTimer(() => {
             const nada = SINAIS.find((x) => x.id === 'nada');
             sendPartnerSignal(G, nada.boost);
+            showAvatarSignal('voce', el.badgeVoce, nada.icon);
             G.log('Você não sinalizou a tempo — sinal de "não tenho nada" enviado automaticamente.');
             tick();
         });
@@ -415,6 +435,7 @@ function buildSignalRow() {
         btn.addEventListener('click', () => {
             const wasSignalPhase = G.phase === 'signal-phase';
             sendPartnerSignal(G, s.boost);
+            showAvatarSignal('voce', el.badgeVoce, s.icon);
             G.log(`Você sinalizou: ${s.desc}`);
             if (wasSignalPhase) tick();
             else render();
@@ -439,6 +460,10 @@ el.endPlayAgain.addEventListener('click', () => {
 el.infoBtn.addEventListener('click', () => el.infoModal.classList.add('open'));
 el.infoClose.addEventListener('click', () => el.infoModal.classList.remove('open'));
 el.infoModal.addEventListener('click', (e) => { if (e.target === el.infoModal) el.infoModal.classList.remove('open'); });
+
+el.historyBtn.addEventListener('click', () => el.historyModal.classList.add('open'));
+el.historyClose.addEventListener('click', () => el.historyModal.classList.remove('open'));
+el.historyModal.addEventListener('click', (e) => { if (e.target === el.historyModal) el.historyModal.classList.remove('open'); });
 
 buildSignalRow();
 newGame();
