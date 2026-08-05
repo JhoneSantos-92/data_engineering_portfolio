@@ -46,9 +46,12 @@ const el = {
     feltTable: document.querySelector('.felt-table'),
     dealOverlay: document.getElementById('deal-overlay'),
     confettiLayer: document.getElementById('confetti-layer'),
+    fixedTrucoBtn: document.getElementById('fixed-truco-btn'),
+    fixedCorrerBtn: document.getElementById('fixed-correr-btn'),
 };
 
 const SEAT_BY_INDEX = { 0: 'seatBottom', 1: 'seatRight', 2: 'seatTop', 3: 'seatLeft' };
+const FIXED_CALL_LABEL = { 3: 'TRUCO!', 6: 'SEEEEEIS!', 9: 'NOOOOVE!', 12: 'DOOOZE!' };
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let G = createGame(logMessage);
@@ -299,6 +302,48 @@ function render() {
     renderSlot(el.slotBottom, G.table[0], 0);
 
     renderActionBar();
+    updateFixedActions();
+}
+
+function updateFixedActions() {
+    el.fixedTrucoBtn.onclick = null;
+    el.fixedCorrerBtn.onclick = null;
+
+    let trucoEnabled = false;
+    let trucoLevel = nextLevel(G.stake);
+
+    if (!G.matchOver && G.phase === 'playing' && G.turnIndex === 0 && canCall(G, 'A')) {
+        trucoEnabled = true;
+        trucoLevel = nextLevel(G.stake);
+        el.fixedTrucoBtn.onclick = () => {
+            makeCall(G, 'A', 'Você');
+            showBanner(`Você pediu ${CALL_NAME[trucoLevel]}!`);
+            pulseFeltTable();
+            tick();
+        };
+    } else if (!G.matchOver && G.phase === 'awaiting-response' && G.pendingCall && G.pendingCall.respondingTeam === 'A' && G.pendingCall.level < 12) {
+        trucoEnabled = true;
+        trucoLevel = nextLevel(G.pendingCall.level);
+        el.fixedTrucoBtn.onclick = () => {
+            const raisedLevel = trucoLevel;
+            raiseCall(G);
+            showBanner(`Você pediu ${CALL_NAME[raisedLevel]}!`);
+            pulseFeltTable();
+            tick();
+        };
+    }
+    el.fixedTrucoBtn.textContent = FIXED_CALL_LABEL[trucoLevel];
+    el.fixedTrucoBtn.disabled = !trucoEnabled;
+
+    let correrEnabled = false;
+    if (!G.matchOver && G.phase === 'awaiting-response' && G.pendingCall && G.pendingCall.respondingTeam === 'A') {
+        correrEnabled = true;
+        el.fixedCorrerBtn.onclick = () => { runFromCall(G); tick(); };
+    } else if (!G.matchOver && G.phase === 'mao11-human') {
+        correrEnabled = true;
+        el.fixedCorrerBtn.onclick = () => { runFromHand(G, 'A', 1); tick(); };
+    }
+    el.fixedCorrerBtn.disabled = !correrEnabled;
 }
 
 function renderDealingShell() {
@@ -320,6 +365,8 @@ function renderDealingShell() {
     lastTableKeys = [null, null, null, null];
     el.actionBar.innerHTML = '<p class="prompt">Distribuindo as cartas...</p>';
     el.signalRow.classList.add('dealing-lock');
+    el.fixedTrucoBtn.disabled = true;
+    el.fixedCorrerBtn.disabled = true;
 }
 
 function renderSeat(container, player, isHuman) {
@@ -382,16 +429,12 @@ function renderActionBar() {
     }
 
     if (G.phase === 'mao11-human') {
-        el.actionBar.innerHTML = '<p class="prompt">Mão de Onze! Sua dupla está com 11 pontos. Vocês veem as cartas uma da outra (mão aberta). Jogar vale 3, correr entrega 1 ponto.</p>';
+        el.actionBar.innerHTML = '<p class="prompt">Mão de Onze! Sua dupla está com 11 pontos. Vocês veem as cartas uma da outra (mão aberta). Jogar vale 3, ou corra pelo botão fixo (perde 1).</p>';
         addButton('Jogar (vale 3)', () => {
             logSilentOpponentSignal(G);
             G.phase = 'playing';
             tick();
         });
-        addButton('Correr (perde 1)', () => {
-            runFromHand(G, 'A', 1);
-            tick();
-        }, true);
         startHumanTimer(() => {
             runFromHand(G, 'A', 1);
             tick();
@@ -439,18 +482,8 @@ function renderActionBar() {
 
     if (G.phase === 'awaiting-response' && G.pendingCall.respondingTeam === 'A') {
         const call = G.pendingCall;
-        el.actionBar.innerHTML = `<p class="prompt">${teamName(call.byTeam)} pediu ${CALL_NAME[call.level]}! Vale ${call.level} pontos.</p>`;
+        el.actionBar.innerHTML = `<p class="prompt">${teamName(call.byTeam)} pediu ${CALL_NAME[call.level]}! Vale ${call.level} pontos. Use os botões fixos para aumentar ou correr.</p>`;
         addButton('Aceitar', () => { acceptCall(G); tick(); });
-        addButton('Correr', () => { runFromCall(G); tick(); }, true);
-        if (call.level < 12) {
-            const raisedLevel = nextLevel(call.level);
-            addButton(`Aumentar p/ ${CALL_NAME[raisedLevel]}`, () => {
-                raiseCall(G);
-                showBanner(`Você pediu ${CALL_NAME[raisedLevel]}!`);
-                pulseFeltTable();
-                tick();
-            });
-        }
         startHumanTimer(() => { runFromCall(G); tick(); });
         return;
     }
@@ -466,17 +499,8 @@ function renderActionBar() {
         playHiddenMode = false;
         const canHide = G.roundResults.length > 0;
         el.actionBar.innerHTML = canHide
-            ? '<p class="prompt">Sua vez: jogue uma carta, peça um aumento ou jogue uma carta virada.</p>'
-            : '<p class="prompt">Sua vez: jogue uma carta ou peça um aumento.</p>';
-        if (canCall(G, 'A')) {
-            const callLevel = nextLevel(G.stake);
-            addButton(`Pedir ${CALL_NAME[callLevel]}`, () => {
-                makeCall(G, 'A', 'Você');
-                showBanner(`Você pediu ${CALL_NAME[callLevel]}!`);
-                pulseFeltTable();
-                tick();
-            });
-        }
+            ? '<p class="prompt">Sua vez: jogue uma carta, jogue uma carta virada ou peça truco pelo botão fixo.</p>'
+            : '<p class="prompt">Sua vez: jogue uma carta ou peça truco pelo botão fixo.</p>';
         if (canHide) {
             const hideBtn = addButton('🂠 Jogar virada', () => {
                 playHiddenMode = !playHiddenMode;
@@ -487,7 +511,7 @@ function renderActionBar() {
         }
         startHumanTimer(() => {
             const card = aiPickCard(G, 0);
-            if (!card) { tick(); return; }
+            if (!card) return;
             playCard(G, 0, card, false);
             advanceTurnAfterPlay(G);
             tick();
@@ -606,7 +630,7 @@ function tick() {
             tick();
         } else {
             const card = aiPickCard(G, idx);
-            if (!card) { tick(); return; }
+            if (!card) return;
             playCard(G, idx, card);
             advanceTurnAfterPlay(G);
             afterCardPlayed();
