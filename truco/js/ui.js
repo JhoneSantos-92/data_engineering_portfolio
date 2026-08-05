@@ -192,6 +192,7 @@ function beginHandWithDealAnimation() {
     startHand(G);
     if (prefersReducedMotion) {
         viraFlipPending = false;
+        if (G.maoDeFerro) showBanner('⚔️ MÃO DE FERRO! Quem vencer, vence a partida!');
         tick();
         return;
     }
@@ -200,6 +201,7 @@ function beginHandWithDealAnimation() {
     runDealAnimation(() => {
         dealing = false;
         viraFlipPending = true;
+        if (G.maoDeFerro) showBanner('⚔️ MÃO DE FERRO! Quem vencer, vence a partida!');
         tick();
     });
 }
@@ -385,7 +387,7 @@ function renderSeat(container, player, isHuman) {
             }
             handDiv.appendChild(c);
         });
-    } else if (G.maoDeFerro || (G.maoDeOnze && G.maoOnzeTeam === 'A' && player.team === 'A')) {
+    } else if (G.maoDeOnze && G.maoOnzeTeam === 'A' && player.team === 'A') {
         player.hand.forEach((card) => handDiv.appendChild(cardEl(card)));
     } else {
         player.hand.forEach(() => handDiv.appendChild(cardBackEl()));
@@ -415,16 +417,6 @@ function renderActionBar() {
 
     if (G.matchOver) {
         showEndModal();
-        return;
-    }
-
-    if (G.phase === 'ferro-reveal') {
-        el.actionBar.innerHTML = '<p class="prompt">Mão de ferro! Todas as cartas na mesa. Boa sorte.</p>';
-        addButton('Continuar', () => {
-            logSilentOpponentSignal(G);
-            beginTeamASignalPhase(G);
-            tick();
-        });
         return;
     }
 

@@ -145,12 +145,8 @@ function startHand(G) {
 
     if (G.score.A === 11 && G.score.B === 11) {
         G.maoDeFerro = true;
-        G.stake = 3;
-        G.log('MÃO DE FERRO! Ambas as duplas em 11 pontos. Todas as cartas reveladas, vale 3.');
-        G.phase = 'ferro-reveal';
-        return;
-    }
-    if (G.score.A === 11 || G.score.B === 11) {
+        G.log('MÃO DE FERRO! Ambas as duplas em 11 pontos. Mão normal, no escuro: quem vencer, vence a partida!');
+    } else if (G.score.A === 11 || G.score.B === 11) {
         G.maoDeOnze = true;
         G.maoOnzeTeam = G.score.A === 11 ? 'A' : 'B';
         G.stake = 3;
@@ -159,9 +155,10 @@ function startHand(G) {
         return;
     }
 
-    // Hand normal: as duas duplas trocam sinais antes da 1a carta. A troca da
-    // dupla B fica invisivel para o jogador; a da dupla A (Duda -> voce) e o
-    // que trava o jogo ate voce responder.
+    // Hand normal (e mao de ferro, que joga-se identica a uma mao normal):
+    // as duas duplas trocam sinais antes da 1a carta. A troca da dupla B fica
+    // invisivel para o jogador; a da dupla A (Duda -> voce) e o que trava o
+    // jogo ate voce responder.
     logSilentOpponentSignal(G);
     beginTeamASignalPhase(G);
 }
@@ -289,7 +286,7 @@ function runFromHand(G, runningTeam, points) {
 }
 
 function canCall(G, team) {
-    return G.stake < 12 && !G.maoDeOnze && !G.maoDeFerro && (G.callRight === null || G.callRight === team);
+    return G.stake < 12 && !G.maoDeOnze && (G.callRight === null || G.callRight === team);
 }
 
 function makeCall(G, byTeam, byPlayerName = null) {
