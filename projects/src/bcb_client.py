@@ -38,7 +38,7 @@ def parse_rows(dados_brutos: list[dict]) -> list[dict]:
     return [
         {
             "reference_date": datetime.strptime(item["data"], "%d/%m/%Y").date(),
-            "valor": float(item["valor"]),
+            "value": float(item["valor"]),
         }
         for item in dados_brutos
     ]
